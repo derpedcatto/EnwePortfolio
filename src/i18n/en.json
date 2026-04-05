@@ -1,0 +1,11 @@
+{
+  "artist": "Anna Yaroshevych",
+  "nav": {
+    "home": "Home",
+    "work": "Work",
+    "about": "About"
+  },
+  "home": {
+    "hero": "3D Artist"
+  }
+}
