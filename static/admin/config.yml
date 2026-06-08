@@ -1,0 +1,184 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+
+backend:
+  name: github
+  repo: derpedcatto/EnwePortfolio
+
+media_folder: static/uploads
+public_folder: /uploads
+
+collections:
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: content/projects
+    slug: "{{fields.slug}}"
+    summary: "{{title}} ({{date}})"
+    sortable_fields: ["date", "title"]
+    media_folder: "/static/uploads/projects/{{slug}}"
+    public_folder: "/uploads/projects/{{slug}}"
+    fields:
+      - { name: title, label: Title, widget: string }
+
+      - name: slug
+        label: Slug
+        widget: string
+        hint: "URL-friendly identifier, ex.'medieval-sword-prop'. Lowercase letters, numbers, and hyphens only"
+        pattern:
+          [
+            "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+            "Lowercase letters, numbers, and hyphens only",
+          ]
+
+      - name: date
+        label: Date of creation
+        widget: datetime
+        format: DD.MM.YYYY
+        date_format: DD.MM.YYYY
+        time_format: false
+        picker_utc: true
+
+      - {
+          name: summary,
+          label: Short summary,
+          widget: text,
+          required: false,
+          hint: Brief summary (1-2 sentences) for cards description,
+        }
+
+      - name: category
+        label: Category
+        widget: select
+        options:
+          - { label: Models, value: models }
+          - { label: Materials, value: materials }
+          - { label: Various, value: various }
+
+      - name: tags
+        label: Tags
+        widget: relation
+        collection: tags
+        value_field: "{{slug}}"
+        search_fields: ["title"]
+        display_fields: ["title"]
+        multiple: true
+        required: false
+
+      - {
+          name: software,
+          label: Software / Tools,
+          widget: select,
+          multiple: true,
+          required: false,
+          options:
+            [
+              Blender,
+              3ds Max,
+              ZBrush,
+              "Substance 3D Painter",
+              "Marmoset Toolbag",
+              RizomUV,
+              "Unreal Engine",
+              Maya,
+              Houdini,
+              Photoshop,
+              PureRef,
+            ],
+        }
+
+      - name: links
+        label: External Links
+        widget: list
+        required: false
+        fields:
+          - name: platform
+            label: Platform
+            widget: select
+            required: false
+            options: [ArtStation]
+          - { name: label, label: Label, widget: string, required: false }
+          - { name: url, label: URL, widget: string }
+
+      - name: thumbnail
+        label: Thumbnail
+        widget: image
+
+      - name: thumbnail_hover
+        label: Thumbnail (Hover)
+        widget: file
+        required: false
+        hint: Shows on card hover. Supported formats - JPG, PNG, WebP, GIF, MP4
+
+      - name: gallery
+        label: Gallery
+        widget: list
+        required: false
+        hint: Gallery of images that is displayed at top of the project page
+        field: { name: image, label: Image, widget: image }
+
+      - name: body
+        label: Body
+        widget: richtext
+        required: false
+  - name: pages
+    label: Pages
+    files:
+      - name: landing
+        label: Landing Page
+        file: content/pages/landing.md
+        fields:
+          - name: top_section
+            label: Top Section
+            widget: richtext
+            required: false
+          - name: featured_projects
+            label: Featured projects (max. 10)
+            widget: relation
+            collection: projects
+            value_field: "{{slug}}" # stores the project's filename slug
+            search_fields: ["title"]
+            display_fields: ["title"]
+            multiple: true
+            min: 1
+            max: 10
+            hint: Order here = order shown on the page
+          - name: bottom_section
+            label: Bottom Section
+            widget: richtext
+            required: false
+      - name: about
+        label: About Page
+        file: content/pages/about.md
+        fields:
+          - { name: title, label: Title, widget: string, required: false }
+          - { name: subtitle, label: Subtitle, widget: string, required: false }
+          - { name: avatar, label: Avatar, widget: image, required: false }
+          - { name: body, label: Body, widget: richtext }
+  - name: settings
+    label: Settings
+    files:
+      - name: contacts_socials
+        label: Contact & Socials
+        file: content/pages/contacts.yml
+        fields:
+          - { name: email, label: Email, widget: string, required: false }
+          - name: socials
+            label: Social Links
+            widget: list
+            fields:
+              - {
+                  name: platform,
+                  label: Platform,
+                  widget: select,
+                  options: [ArtStation, LinkedIn, Telegram],
+                }
+              - { name: url, label: URL, widget: string }
+  - name: tags
+    label: Tags
+    label_singular: Tag
+    folder: content/data/tags
+    create: true
+    identifier_field: title
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: Tag Name, widget: string }
