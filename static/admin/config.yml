@@ -7,6 +7,18 @@ backend:
 media_folder: static/uploads
 public_folder: /uploads
 
+media_libraries:
+  all:
+    slugify_filename: true
+    transformations:
+      raster_image:
+        format: webp
+        quality: 90
+        width: 2560
+        height: 2560
+      svg:
+        optimize: true
+
 collections:
   - name: projects
     label: Projects
