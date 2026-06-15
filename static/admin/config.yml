@@ -4,20 +4,24 @@ backend:
   name: github
   repo: derpedcatto/EnwePortfolio
 
-media_folder: static/uploads
-public_folder: /uploads
-
 media_libraries:
   all:
     slugify_filename: true
     transformations:
       raster_image:
         format: webp
-        quality: 90
+        quality: 85
         width: 2560
         height: 2560
       svg:
         optimize: true
+
+  cloudflare_r2:
+    account_id: d3d3d37b3ea59f639b515fa8b2c730c5
+    bucket: enweportfolio
+    access_key_id: de24be5494c9250daa07b729222ee36a
+    public_url: media.annayaroshevych.com
+    prefix: uploads/
 
 collections:
   - name: projects
@@ -27,8 +31,8 @@ collections:
     slug: "{{fields.slug}}"
     summary: "{{title}} ({{date}})"
     sortable_fields: ["date", "title"]
-    media_folder: "/static/uploads/projects/{{slug}}"
-    public_folder: "/uploads/projects/{{slug}}"
+    media_folder: "projects/{{slug}}"
+    public_folder: "projects/{{slug}}"
     fields:
       - { name: title, label: Title, widget: string }
 
@@ -119,14 +123,22 @@ collections:
         label: Thumbnail (Hover)
         widget: file
         required: false
-        hint: Shows on card hover. Supported formats - JPG, PNG, WebP, GIF, MP4
+        hint: Shows on card hover. Best formats - JPG, PNG, WebP, MP4
 
       - name: gallery
         label: Gallery
         widget: list
         required: false
         hint: Gallery of images that is displayed at top of the project page
-        field: { name: image, label: Image, widget: image }
+        fields:
+          - { name: image, label: Image, widget: image }
+          - {
+              name: alt,
+              label: Alt text,
+              widget: string,
+              hint: "Describe the image for screen readers, search engines and overall accessibility",
+            }
+          - { name: caption, label: Caption, widget: string, required: false }
 
       - name: body
         label: Body
