@@ -1,28 +1,28 @@
 {
-	"name": "enweportfolio",
-	"private": true,
-	"version": "0.0.1",
-	"type": "module",
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''"
-	},
-	"devDependencies": {
-		"@sveltejs/adapter-static": "^3.0.10",
-		"@sveltejs/kit": "^2.57.0",
-		"@sveltejs/vite-plugin-svelte": "^7.0.0",
-		"mdsvex": "^0.12.7",
-		"svelte": "^5.55.2",
-		"vite": "^8.0.7"
-	},
-	"dependencies": {
-		"embla-carousel-svelte": "^8.6.0",
-		"fuse.js": "^7.4.2",
-		"photoswipe": "^5.4.4",
-		"remark-gfm": "^4.0.1",
-		"sass": "^1.99.0",
-		"thumbhash": "^0.1.1"
-	}
+  "name": "enweportfolio",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "scripts": {
+    "dev": "vite dev",
+    "build": "vite build",
+    "preview": "vite preview",
+    "prepare": "svelte-kit sync || echo ''"
+  },
+  "devDependencies": {
+    "@sveltejs/adapter-cloudflare": "^7.2.8",
+    "@sveltejs/kit": "^2.65.1",
+    "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "mdsvex": "^0.12.7",
+    "svelte": "^5.55.2",
+    "vite": "^8.0.7"
+  },
+  "dependencies": {
+    "embla-carousel-svelte": "^8.6.0",
+    "fuse.js": "^7.4.2",
+    "photoswipe": "^5.4.4",
+    "remark-gfm": "^4.0.1",
+    "sass": "^1.99.0",
+    "thumbhash": "^0.1.1"
+  }
 }
