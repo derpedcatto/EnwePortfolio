@@ -1,0 +1,7 @@
+@use "abstracts" as *;
+
+@layer components {
+  .content-grid {
+    @include content-grid;
+  }
+}

@@ -1,6 +1,7 @@
 import adapter from "@sveltejs/adapter-cloudflare";
 import { mdsvex } from "mdsvex";
 import remarkGfm from "remark-gfm";
+import { vitePreprocess } from "@sveltejs/vite-plugin-svelte";
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -9,9 +10,15 @@ const config = {
     runes: ({ filename }) =>
       filename.split(/[/\\]/).includes("node_modules") ? undefined : true,
   },
-  preprocess: mdsvex({
-    remarkPlugins: [remarkGfm],
-  }),
+  preprocess: [
+    vitePreprocess({
+      style: true,
+      script: false,
+    }),
+    mdsvex({
+      remarkPlugins: [remarkGfm],
+    }),
+  ],
   kit: {
     adapter: adapter(),
   },
