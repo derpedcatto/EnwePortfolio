@@ -7,15 +7,22 @@
     "dev": "vite dev",
     "build": "vite build",
     "preview": "vite preview",
-    "prepare": "svelte-kit sync || echo ''"
+    "prepare": "svelte-kit sync || echo ''",
+    "test": "vitest run",
+    "generate": "node scripts/generate-content-data.js",
+    "predev": "node scripts/generate-content-data.js",
+    "prebuild": "node scripts/generate-content-data.js"
   },
   "devDependencies": {
     "@sveltejs/adapter-cloudflare": "^7.2.8",
     "@sveltejs/kit": "^2.65.1",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "gray-matter": "^4.0.3",
     "mdsvex": "^0.12.7",
+    "sharp": "^0.35.1",
     "svelte": "^5.55.2",
-    "vite": "^8.0.7"
+    "vite": "^8.0.7",
+    "vitest": "^4.1.8"
   },
   "dependencies": {
     "embla-carousel-svelte": "^8.6.0",

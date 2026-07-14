@@ -20,7 +20,7 @@ media_libraries:
     account_id: d3d3d37b3ea59f639b515fa8b2c730c5
     bucket: enweportfolio
     access_key_id: de24be5494c9250daa07b729222ee36a
-    public_url: media.annayaroshevych.com
+    public_url: https://media.annayaroshevych.com
     prefix: uploads/
 
 collections:
@@ -123,13 +123,13 @@ collections:
         label: Thumbnail (Hover)
         widget: file
         required: false
-        hint: Shows on card hover. Best formats - JPG, PNG, WebP, MP4
+        hint: "Shows on card hover. Best formats - JPG, PNG, WebP, MP4"
 
       - name: gallery
         label: Gallery
         widget: list
         required: false
-        hint: Gallery of images that is displayed at top of the project page
+        hint: Gallery of images displayed at the top of the project page
         fields:
           - { name: image, label: Image, widget: image }
           - {
