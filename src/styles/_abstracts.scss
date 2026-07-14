@@ -1,30 +1,68 @@
+@use "sass:map";
+@use "derpe-scss-base/abstracts/defaults" as base;
+
 @forward "derpe-scss-base/abstracts" with (
-  $colors: (
-    bg: (
-      #fbf7f7,
-      #fbf7f7,
+  $colors: map.merge(
+      base.$colors,
+      (
+        bg: (
+          #fbf7f7,
+          #fbf7f7,
+        ),
+        surface-1: (
+          #ffffff,
+          #ffffff,
+        ),
+        surface-2: (
+          #fdf9f9,
+          #fdf9f9,
+        ),
+        elements: (
+          #e7dcdc,
+          #e7dcdc,
+        ),
+        icons: (
+          #afa3a3,
+          #afa3a3,
+        ),
+        primary: (
+          #4d0000,
+          #4d0000,
+        ),
+        secondary: (
+          #daa3a3,
+          #daa3a3,
+        ),
+        text: (
+          #150c0c,
+          #150c0c,
+        ),
+        text-muted: (
+          #8c8080,
+          #8c8080,
+        ),
+        accent: (
+          #cc6f6f,
+          #cc6f6f,
+        ),
+        accent-hover: (
+          #e45050,
+          #e45050,
+        ),
+        skeleton-start: (
+          #ece1e1,
+          #ece1e1,
+        ),
+        skeleton-highlight: (
+          #ffffff,
+          #ffffff,
+        ),
+        skeleton-end: (
+          #e0d3d3,
+          #e0d3d3,
+        ),
+      )
     ),
-    primary: (
-      #4d0000,
-      #4d0000,
-    ),
-    secondary: (
-      #daa3a3,
-      #daa3a3,
-    ),
-    text: (
-      #150c0c,
-      #150c0c,
-    ),
-    accent: (
-      #cc6f6f,
-      #cc6f6f,
-    ),
-    accent-hover: (
-      #e45050,
-      #e45050,
-    ),
-  ),
   $font-stack-body: (
     "Montserrat",
     sans-serif,

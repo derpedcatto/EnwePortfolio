@@ -13,7 +13,7 @@ Static portfolio site for a 3D artist. SvelteKit (Svelte 5, runes) + Sveltia CMS
 ## Styling
 
 - Design tokens, mixins, and type helpers come from **`derpe-scss-base`** (installed from GitHub, `dependencies`). Its `exports` map is `"./*": "./styles/*"`, so subpaths omit `styles/`: use `derpe-scss-base/abstracts`, **not** `derpe-scss-base/styles/abstracts`.
-- `src/styles/_abstracts.scss` is the project's token config: it `@forward`s the library's abstracts `with (...)` the site's `$colors` and `$font-stack`. **Edit tokens here.**
+- `src/styles/_abstracts.scss` is the project's token config: it `@forward`s the library's abstracts `with (...)` the site's `$colors` and `$font-stack`. **Edit tokens here.** `$colors` is `map.merge`d over `derpe-scss-base/abstracts/defaults` so library-added roles never silently drop; read defaults only from that `defaults` subpath (loading `abstracts` or `abstracts/config` before the `@forward ... with` breaks configuration).
 - `vite.config.js` injects `@use "abstracts" as *` into every SCSS file (via `additionalData` + a `loadPaths` entry for `src/styles`). Tokens/mixins are therefore already in scope in every `.scss` file and every `<style lang="scss">` block — **never `@use` abstracts manually**, a second load errors.
 - `$colors` roles are `(light, dark)` pairs; `base/_theme.scss` emits them as `light-dark()` custom properties. The site is light-only, so both slots hold the same value.
 - `postcss.config.cjs` runs `postcss-preset-env` (polyfills `light-dark()`), so `postcss` + `postcss-preset-env` are required devDependencies.
