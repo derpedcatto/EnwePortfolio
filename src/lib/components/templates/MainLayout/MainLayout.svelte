@@ -23,6 +23,14 @@
       @include from(sm) {
         flex-direction: row;
       }
+
+      &__content {
+        padding-top: 20px;
+
+        @include from(sm) {
+          padding-top: 40px;
+        }
+      }
     }
   }
 </style>

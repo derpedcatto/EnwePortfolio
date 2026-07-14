@@ -1,67 +1,17 @@
 <script>
-  import { afterNavigate } from "$app/navigation";
-  import HamburgerButton from "$lib/components/atoms/HamburgerButton/HamburgerButton.svelte";
-
-  let menuOpen = $state(false);
-
-  function toggleMenu() {
-    menuOpen = !menuOpen;
-  }
-
-  function closeMenu() {
-    menuOpen = false;
-  }
-
-  function handleKeydown(event) {
-    if (event.key === "Escape" && menuOpen) {
-      closeMenu();
-    }
-  }
-
-  $effect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-
-    return () => {
-      document.body.style.overflow = "";
-    };
-  });
-
-  // sm breakpoint is 576px (derpe-scss-base/abstracts/_defaults.scss), matching
-  // the from(sm) mixin used for desktop styles in this component's style block.
-  $effect(() => {
-    const query = window.matchMedia("(min-width: 576px)");
-
-    function handleChange(event) {
-      if (event.matches) {
-        closeMenu();
-      }
-    }
-
-    query.addEventListener("change", handleChange);
-
-    return () => {
-      query.removeEventListener("change", handleChange);
-    };
-  });
-
-  afterNavigate(() => {
-    closeMenu();
-  });
+  import HamburgerMenu from "$lib/components/molecules/HamburgerMenu/HamburgerMenu.svelte";
 </script>
 
-<svelte:window onkeydown={handleKeydown} />
-
 <header>
-  <div class="header__top">
-    <div>
-      <h3>anna yaroshevych</h3>
-      <small class="subtitle">3d artist</small>
-    </div>
+  <HamburgerMenu>
+    {#snippet brand()}
+      <div class="identity">
+        <h3>Anna Yaroshevych</h3>
 
-    <HamburgerButton open={menuOpen} onclick={toggleMenu} />
-  </div>
+        <small class="subtitle">3d artist</small>
+      </div>
+    {/snippet}
 
-  <div class="nav-panel" class:is-open={menuOpen}>
     <nav class="primary-nav">
       <ul>
         <li>selected works</li>
@@ -83,7 +33,7 @@
         <li>Mail</li>
       </ul>
     </nav>
-  </div>
+  </HamburgerMenu>
 </header>
 
 <style lang="scss">
@@ -101,11 +51,23 @@
         height: 100vh;
         overflow-y: auto;
         z-index: 100;
-        padding: 0 60px;
+        padding: 40px 60px 0;
         border-right: 1px solid var(--color-elements);
       }
 
+      .identity {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+
+        @include from(sm) {
+          flex-direction: column;
+          gap: 5px;
+        }
+      }
+
       h3 {
+        text-transform: lowercase;
         word-spacing: normal;
 
         @include from(sm) {
@@ -118,33 +80,11 @@
         font-weight: 400;
         letter-spacing: 0.16em;
         text-transform: uppercase;
-      }
-    }
 
-    .header__top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      @include until(sm) {
-        position: relative;
-        z-index: 100;
-        padding: 16px var(--gutter);
-      }
-    }
-
-    .nav-panel {
-      @include until(sm) {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 99;
-        overflow-y: auto;
-        padding: 16px var(--gutter);
-        background-color: var(--color-bg);
-
-        &.is-open {
-          display: block;
+        @include until(sm) {
+          display: flex;
+          align-items: center;
+          padding-top: 5px;
         }
       }
     }
