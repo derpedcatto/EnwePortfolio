@@ -1,6 +1,7 @@
 <script>
   import { afterNavigate } from "$app/navigation";
   import HamburgerButton from "$lib/components/atoms/HamburgerButton/HamburgerButton.svelte";
+  import { BREAKPOINTS } from "$lib/constants/breakpoints.js";
 
   let { brand, children } = $props();
 
@@ -28,10 +29,8 @@
     };
   });
 
-  // sm breakpoint is 576px (derpe-scss-base/abstracts/_defaults.scss), matching
-  // the from(sm) mixin used for desktop styles in this component's style block.
   $effect(() => {
-    const query = window.matchMedia("(min-width: 576px)");
+    const query = window.matchMedia(`(min-width: ${BREAKPOINTS.sm}px)`);
 
     function handleChange(event) {
       if (event.matches) {
@@ -65,30 +64,32 @@
 
 <style lang="scss">
   @layer components {
-    .hamburger-menu__top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+    .hamburger-menu {
+      &__top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
 
-      @include until(sm) {
-        position: relative;
-        z-index: 100;
-        padding: 16px var(--gutter);
+        @include until(sm) {
+          position: relative;
+          z-index: 100;
+          padding: 16px var(--gutter);
+        }
       }
-    }
 
-    .hamburger-menu__panel {
-      @include until(sm) {
-        display: none;
-        position: fixed;
-        inset: 0;
-        z-index: 99;
-        overflow-y: auto;
-        padding: 16px var(--gutter);
-        background-color: var(--color-bg);
+      &__panel {
+        @include until(sm) {
+          display: none;
+          position: fixed;
+          inset: 0;
+          z-index: 99;
+          overflow-y: auto;
+          padding: 16px var(--gutter);
+          background-color: var(--color-bg);
 
-        &.is-open {
-          display: block;
+          &.is-open {
+            display: block;
+          }
         }
       }
     }

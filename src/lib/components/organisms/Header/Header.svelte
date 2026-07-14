@@ -47,12 +47,17 @@
         position: sticky;
         top: 0;
         left: 0;
-        width: 320px;
+        width: 220px;
         height: 100vh;
         overflow-y: auto;
         z-index: 100;
-        padding: 40px 60px 0;
+        padding: 40px 30px 0;
         border-right: 1px solid var(--color-elements);
+      }
+
+      @include from(lg) {
+        width: 320px;
+        padding: 40px 60px 0;
       }
 
       .identity {
