@@ -26,6 +26,24 @@
     };
   });
 
+  // sm breakpoint is 576px (derpe-scss-base/abstracts/_defaults.scss), matching
+  // the from(sm) mixin used for desktop styles in this component's style block.
+  $effect(() => {
+    const query = window.matchMedia("(min-width: 576px)");
+
+    function handleChange(event) {
+      if (event.matches) {
+        closeMenu();
+      }
+    }
+
+    query.addEventListener("change", handleChange);
+
+    return () => {
+      query.removeEventListener("change", handleChange);
+    };
+  });
+
   afterNavigate(() => {
     closeMenu();
   });
