@@ -1,0 +1,36 @@
+@forward "derpe-scss-base/abstracts" with (
+  $colors: (
+    bg: (
+      #fbf7f7,
+      #fbf7f7,
+    ),
+    primary: (
+      #4d0000,
+      #4d0000,
+    ),
+    secondary: (
+      #daa3a3,
+      #daa3a3,
+    ),
+    text: (
+      #150c0c,
+      #150c0c,
+    ),
+    accent: (
+      #cc6f6f,
+      #cc6f6f,
+    ),
+    accent-hover: (
+      #e45050,
+      #e45050,
+    ),
+  ),
+  $font-stack-body: (
+    "Montserrat",
+    sans-serif,
+  ),
+  $font-stack-heading: (
+    "Jura",
+    sans-serif,
+  )
+);

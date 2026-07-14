@@ -19,12 +19,15 @@
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "gray-matter": "^4.0.3",
     "mdsvex": "^0.12.7",
+    "postcss": "^8.5.19",
+    "postcss-preset-env": "^11.3.2",
     "sharp": "^0.35.1",
     "svelte": "^5.55.2",
     "vite": "^8.0.7",
     "vitest": "^4.1.8"
   },
   "dependencies": {
+    "derpe-scss-base": "github:derpedcatto/derpe-scss-base",
     "embla-carousel-svelte": "^8.6.0",
     "fuse.js": "^7.4.2",
     "photoswipe": "^5.4.4",

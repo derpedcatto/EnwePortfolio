@@ -1,4 +1,6 @@
-@use "variables";
-@use "global";
-@use "mixins";
-@use "reset";
+@use "fonts";
+@use "derpe-scss-base/main";
+
+:root {
+  color-scheme: light;
+}
