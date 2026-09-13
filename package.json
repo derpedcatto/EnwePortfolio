@@ -4,10 +4,11 @@
   "version": "0.0.1",
   "type": "module",
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
+    "dev": "npm run design-tokens && vite dev",
+    "build": "npm run design-tokens && vite build",
     "preview": "vite preview",
-    "prepare": "svelte-kit sync || echo ''"
+    "prepare": "svelte-kit sync || echo ''",
+    "design-tokens": "node scripts/generate-design-tokens.js"
   },
   "devDependencies": {
     "@sveltejs/adapter-cloudflare": "^7.2.8",
