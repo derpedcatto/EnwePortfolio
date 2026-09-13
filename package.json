@@ -13,9 +13,11 @@
     "@sveltejs/adapter-cloudflare": "^7.2.8",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "browserslist": "^4.28.9",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
     "lightningcss": "^1.33.0",
+    "mdsvex": "^0.12.8",
     "prettier": "^3.9.6",
     "svelte": "^5.55.2",
     "vite": "^8.0.7"

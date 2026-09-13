@@ -1,4 +1,5 @@
 import { sveltekit } from "@sveltejs/kit/vite";
+import browserslist from "browserslist";
 import { browserslistToTargets } from "lightningcss";
 import { defineConfig } from "vite";
 
@@ -7,7 +8,7 @@ export default defineConfig({
   css: {
     transformer: "lightningcss",
     lightningcss: {
-      targets: browserslistToTargets(browserslist(">= 0.25%")),
+      targets: browserslistToTargets(browserslist(">= 0.25%, not dead")),
       drafts: {
         customMedia: true,
       },
