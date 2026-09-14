@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+
+backend:
+  name: github
+  repo: derpedcatto/EnwePortfolio
+
+media_libraries:
+  all:
+    slugify_filename: true
+    transformations:
+      raster_image:
+        format: webp
+        quality: 85
+        width: 2560
+        height: 2560
+      svg:
+        optimize: true
+
+  cloudflare_r2:
+    account_id: d3d3d37b3ea59f639b515fa8b2c730c5
+    bucket: enweportfolio
+    access_key_id: de24be5494c9250daa07b729222ee36a
+    public_url: https://media.annayaroshevych.com
+    prefix: uploads/
+
+collections:
+  - name: posts
+    label: Posts
+    label_singular: Post
+    folder: /content/posts
+    fields:
+      - { label: Title, name: title, widget: string }
+      - { label: Date, name: date, widget: datetime, type: date }
+      - { label: Body, name: body, widget: richtext }
