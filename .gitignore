@@ -25,3 +25,6 @@ vite.config.ts.timestamp-*
 # Generated design tokens
 /src/styles/media.css
 /src/styles/tokens.css
+
+# Local CMS files
+/static/cms/
