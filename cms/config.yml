@@ -1,8 +1,13 @@
 # yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# sveltia cms icons: https://fonts.google.com/icons?icon.set=Material+Symbols&icon.platform=web
 
 backend:
   name: github
   repo: derpedcatto/EnwePortfolio
+
+slug:
+  encoding: ascii
+  clean_accents: true
 
 media_libraries:
   all:
@@ -15,7 +20,6 @@ media_libraries:
         height: 2560
       svg:
         optimize: true
-
   cloudflare_r2:
     account_id: d3d3d37b3ea59f639b515fa8b2c730c5
     bucket: enweportfolio
@@ -24,11 +28,206 @@ media_libraries:
     prefix: uploads/
 
 collections:
-  - name: posts
-    label: Posts
-    label_singular: Post
-    folder: /content/posts
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: content/projects
+    slug: "{{fields._slug}}"
+    summary: "{{title}} ({{date}}) {{hidden | ternary('(- HIDDEN)', '')}}"
+    icon: view_agenda
+    sortable_fields:
+      {
+        fields: ["date", "title"],
+        default: { field: date, direction: descending },
+      }
+    view_filters:
+      - { label: Hidden, field: hidden, pattern: true }
+      - { label: Public, field: hidden, pattern: false }
+    view_groups:
+      - { label: Visibility, field: hidden }
     fields:
-      - { label: Title, name: title, widget: string }
-      - { label: Date, name: date, widget: datetime, type: date }
-      - { label: Body, name: body, widget: richtext }
+      - { name: title, label: Title, widget: string }
+
+      - {
+          name: hidden,
+          label: Hidden,
+          widget: boolean,
+          default: false,
+          hint: Hide from public website,
+        }
+
+      - name: date
+        label: Date of creation
+        widget: datetime
+        type: date
+        format: DD.MM.YYYY
+        input_timezone: utc
+
+      - {
+          name: summary,
+          label: Short summary,
+          widget: text,
+          required: false,
+          hint: Brief summary (1-2 sentences) for cards description,
+        }
+
+      - name: category
+        label: Category
+        widget: select
+        options:
+          - { label: Models, value: models }
+          - { label: Materials, value: materials }
+          - { label: Various, value: various }
+
+      - name: tags_tools
+        label: Tools
+        widget: relation
+        collection: tags_tools
+        value_field: "{{slug}}"
+        search_fields: ["title"]
+        display_fields: ["title"]
+        multiple: true
+        required: false
+
+      - name: tags_general
+        label: Tags
+        widget: relation
+        collection: tags_general
+        value_field: "{{slug}}"
+        search_fields: ["title"]
+        display_fields: ["title"]
+        multiple: true
+        required: false
+
+      - name: links
+        label: External Links
+        widget: list
+        required: false
+        fields:
+          - name: platform
+            label: Platform
+            widget: select
+            required: false
+            options: [ArtStation, Custom]
+          - { name: label, label: Label, widget: string, required: false }
+          - { name: url, label: URL, type: url, widget: string }
+
+      - name: thumbnail
+        label: Thumbnail
+        widget: image
+
+      - name: thumbnail_hover
+        label: Thumbnail (Hover)
+        widget: file
+        required: false
+        hint: "Shows on card hover. Compress videos beforehand. Best formats - PNG, JPG, WebP, MP4."
+        accept: "image/*,video/mp4"
+
+      - name: gallery
+        label: Gallery
+        widget: list
+        required: false
+        hint: Gallery of images displayed at the top of the project page
+        fields:
+          - { name: image, label: Image, widget: image }
+          - {
+              name: alt,
+              label: Alt text,
+              widget: string,
+              hint: "Describe the image in text format (for accessibility)",
+            }
+          - {
+              name: caption,
+              label: Caption,
+              widget: string,
+              required: false,
+              hint: "Optional text to display under the image",
+            }
+
+      - name: body
+        label: Body
+        widget: richtext
+        required: false
+
+  - name: tags_general
+    label: Tags
+    label_singular: Tag
+    folder: content/data/tags/general
+    reorder: true
+    summary: "{{title}}"
+    fields:
+      - { name: title, label: Name, widget: string }
+
+  - name: tags_tools
+    label: Tools
+    label_singular: Tool
+    folder: content/data/tags/tools
+    reorder: true
+    summary: "{{title}}"
+    icon: build
+    fields:
+      - { name: title, label: Name, widget: string }
+
+singletons:
+  - name: selected_works
+    label: Selected Works Page
+    file: content/pages/selected_works.md
+    icon: home
+    fields:
+      - name: slider_projects
+        label: Slider projects
+        widget: relation
+        collection: projects
+        value_field: "{{slug}}"
+        search_fields: ["title"]
+        display_fields: ["title"]
+        multiple: true
+        required: false
+        hint: Order here = slider order
+
+      - name: featured_projects
+        label: Featured projects
+        widget: relation
+        collection: projects
+        value_field: "{{slug}}"
+        search_fields: ["title"]
+        display_fields: ["title"]
+        multiple: true
+        hint: Order here = order on the page
+
+  - name: about
+    label: About Page
+    file: content/pages/about.md
+    icon: person
+    fields:
+      - { name: title, label: Title, widget: string, required: false }
+      - { name: subtitle, label: Subtitle, widget: string, required: false }
+      - { name: avatar, label: Avatar, widget: image, required: false }
+      - { name: body, label: Body, widget: richtext }
+
+  - divider: true
+
+  - name: contacts
+    label: Contact & Socials
+    file: content/pages/contacts.yml
+    icon: contact_page
+    fields:
+      - {
+          name: email,
+          label: Email,
+          type: email,
+          widget: string,
+          required: false,
+        }
+      - name: socials
+        label: Social Links
+        widget: list
+        required: false
+        fields:
+          - {
+              name: platform,
+              label: Platform,
+              widget: select,
+              options: [ArtStation, LinkedIn, Telegram],
+            }
+          - { name: url, label: URL, type: url, widget: string }
