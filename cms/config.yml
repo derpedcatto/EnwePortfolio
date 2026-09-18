@@ -29,17 +29,16 @@ field_defaults:
 media_libraries:
   all:
     slugify_filename: true
+    max_file_size: 52428800 # 50 MB
     transformations:
-      jpeg: &to_webp
+      png:
         format: webp
-        quality: 85
-        width: 2560
-        height: 2560
-      png: *to_webp
-      webp: *to_webp
+        quality: 100
+        width: 4096
+        height: 4096
       svg:
         optimize: true
-  cloudflare_r2:
+  cloudflare_r2: &r2
     account_id: d3d3d37b3ea59f639b515fa8b2c730c5
     bucket: enweportfolio
     access_key_id: de24be5494c9250daa07b729222ee36a
@@ -52,7 +51,9 @@ collections:
     label_singular: Category
     folder: "content/taxonomies/categories"
     extension: yml
+    format: yml
     reorder: true
+    slug: "{{parent}}-{{title}}"
     summary: "{{parent | ternary('   ↳ ', '')}}{{title}}"
     icon: category
     fields:
@@ -73,6 +74,7 @@ collections:
     label_singular: Tool
     folder: content/taxonomies/tools
     extension: yml
+    format: yml
     reorder: true
     summary: "{{title}}"
     icon: build
@@ -84,6 +86,7 @@ collections:
     label_singular: Tag
     folder: content/taxonomies/tags
     extension: yml
+    format: yml
     reorder: true
     summary: "{{title}}"
     icon: tag
@@ -97,6 +100,7 @@ collections:
     label_singular: Project
     folder: content/projects
     extension: yml
+    format: yml
     slug: "{{fields._slug}}"
     summary: "{{title}} ({{date | date('DD.MM.YYYY')}}) {{hidden | ternary('- HIDDEN', '')}}"
     icon: view_agenda
@@ -176,13 +180,18 @@ collections:
       - name: thumbnail
         label: Thumbnail
         widget: image
+        hint: "Name the file after the project before upload, e.g. cursed-sword-thumb.png"
+        media_libraries:
+          cloudflare_r2: { <<: *r2, prefix: thumbnails/ }
 
       - name: thumbnail_hover
         label: Thumbnail (Hover)
         widget: file
         required: false
-        hint: "Shows on card hover. Compress videos beforehand. Best formats - PNG, JPG, WebP, MP4 (videos)."
+        hint: "Shows on card hover. Compress videos beforehand. Best formats - PNG, JPG, WebP, MP4 (videos). Name the file after the project before upload, e.g. cursed-sword-hover.mp4"
         accept: "image/*,video/mp4"
+        media_libraries:
+          cloudflare_r2: { <<: *r2, prefix: thumbnails/ }
 
       - name: blocks
         label: Content blocks
@@ -280,7 +289,7 @@ collections:
 singletons:
   - name: selected_works
     label: Selected Works Page
-    file: content/pages/selected_works.yml
+    file: content/pages/selected-works.yml
     icon: home
     fields:
       - name: slider_projects
@@ -307,13 +316,13 @@ singletons:
     file: content/pages/about.md
     icon: person
     fields:
-      - {
-          name: avatar,
-          label: Avatar,
-          widget: image,
-          required: false,
-          hint: Have it in portrait format,
-        }
+      - name: avatar
+        label: Avatar
+        widget: image
+        required: false
+        hint: Have it in portrait format
+        media_libraries:
+          cloudflare_r2: { <<: *r2, prefix: site/ }
       - { name: body, label: Body, widget: richtext }
 
   - divider: true
