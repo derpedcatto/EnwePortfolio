@@ -9,15 +9,34 @@ slug:
   encoding: ascii
   clean_accents: true
 
+field_defaults:
+  richtext:
+    modes: [rich_text]
+    editor_components: []
+    buttons:
+      [
+        bold,
+        italic,
+        strikethrough,
+        link,
+        heading-two,
+        heading-three,
+        bulleted-list,
+        numbered-list,
+        quote,
+      ]
+
 media_libraries:
   all:
     slugify_filename: true
     transformations:
-      raster_image:
+      jpeg: &to_webp
         format: webp
         quality: 85
         width: 2560
         height: 2560
+      png: *to_webp
+      webp: *to_webp
       svg:
         optimize: true
   cloudflare_r2:
@@ -25,15 +44,61 @@ media_libraries:
     bucket: enweportfolio
     access_key_id: de24be5494c9250daa07b729222ee36a
     public_url: https://media.annayaroshevych.com
-    prefix: uploads/
+    prefix: projects/
 
 collections:
+  - name: categories
+    label: Categories
+    label_singular: Category
+    folder: "content/taxonomies/categories"
+    extension: yml
+    reorder: true
+    summary: "{{parent | ternary('   ↳ ', '')}}{{title}}"
+    icon: category
+    fields:
+      - { name: title, label: Name, widget: string }
+
+      - name: parent
+        label: Parent category
+        widget: relation
+        collection: categories
+        required: false
+        dropdown_threshold: 0
+        hint: Leave empty if this is a level-0 category with no parents. Don't add existing sub-category as parent.
+        filters:
+          - { field: slug, values: ["{{slug}}"], exclude: true }
+
+  - name: tools
+    label: Tools
+    label_singular: Tool
+    folder: content/taxonomies/tools
+    extension: yml
+    reorder: true
+    summary: "{{title}}"
+    icon: build
+    fields:
+      - { name: title, label: Name, widget: string }
+
+  - name: tags
+    label: Tags
+    label_singular: Tag
+    folder: content/taxonomies/tags
+    extension: yml
+    reorder: true
+    summary: "{{title}}"
+    icon: tag
+    fields:
+      - { name: title, label: Name, widget: string }
+
+  - divider: true
+
   - name: projects
     label: Projects
     label_singular: Project
     folder: content/projects
+    extension: yml
     slug: "{{fields._slug}}"
-    summary: "{{title}} ({{date}}) {{hidden | ternary('(- HIDDEN)', '')}}"
+    summary: "{{title}} ({{date | date('DD.MM.YYYY')}}) {{hidden | ternary('- HIDDEN', '')}}"
     icon: view_agenda
     sortable_fields:
       {
@@ -44,7 +109,7 @@ collections:
       - { label: Hidden, field: hidden, pattern: true }
       - { label: Public, field: hidden, pattern: false }
     view_groups:
-      - { label: Visibility, field: hidden }
+      - { label: Year, field: date, pattern: '\d{4}' }
     fields:
       - { name: title, label: Title, widget: string }
 
@@ -57,11 +122,11 @@ collections:
         }
 
       - name: date
-        label: Date of creation
+        label: Date of creation/upload
         widget: datetime
         type: date
-        format: DD.MM.YYYY
         input_timezone: utc
+        hint: Needed to sort projects by newest/oldest
 
       - {
           name: summary,
@@ -73,42 +138,38 @@ collections:
 
       - name: category
         label: Category
-        widget: select
-        options:
-          - { label: Models, value: models }
-          - { label: Materials, value: materials }
-          - { label: Various, value: various }
+        widget: relation
+        collection: categories
 
-      - name: tags_tools
+      - name: tools
         label: Tools
         widget: relation
-        collection: tags_tools
-        value_field: "{{slug}}"
-        search_fields: ["title"]
-        display_fields: ["title"]
+        collection: tools
         multiple: true
         required: false
 
-      - name: tags_general
+      - name: tags
         label: Tags
         widget: relation
-        collection: tags_general
-        value_field: "{{slug}}"
-        search_fields: ["title"]
-        display_fields: ["title"]
+        collection: tags
         multiple: true
         required: false
 
       - name: links
         label: External Links
+        label_singular: External Link
         widget: list
         required: false
+        summary: "{{platform}}: {{label}} {{url}}"
         fields:
           - name: platform
             label: Platform
             widget: select
-            required: false
-            options: [ArtStation, Custom]
+            default: custom
+            hint: Link type (only assigns platform icons near link name, nothing else)
+            options:
+              - { label: ArtStation, value: artstation }
+              - { label: Custom, value: custom }
           - { name: label, label: Label, widget: string, required: false }
           - { name: url, label: URL, type: url, widget: string }
 
@@ -120,79 +181,125 @@ collections:
         label: Thumbnail (Hover)
         widget: file
         required: false
-        hint: "Shows on card hover. Compress videos beforehand. Best formats - PNG, JPG, WebP, MP4."
+        hint: "Shows on card hover. Compress videos beforehand. Best formats - PNG, JPG, WebP, MP4 (videos)."
         accept: "image/*,video/mp4"
 
-      - name: gallery
-        label: Gallery
+      - name: blocks
+        label: Content blocks
+        label_singular: Content block
         widget: list
         required: false
-        hint: Gallery of images displayed at the top of the project page
-        fields:
-          - { name: image, label: Image, widget: image }
-          - {
-              name: alt,
-              label: Alt text,
-              widget: string,
-              hint: "Describe the image in text format (for accessibility)",
-            }
-          - {
-              name: caption,
-              label: Caption,
-              widget: string,
-              required: false,
-              hint: "Optional text to display under the image",
-            }
+        collapsed: auto
+        thumbnail: file
+        hint: Content blocks for the page. Drag to reorder
+        types:
+          - name: text
+            label: Text
+            summary: "{{body | truncate(80)}}"
+            fields:
+              - name: body
+                label: Text
+                widget: richtext
 
-      - name: body
-        label: Body
-        widget: richtext
-        required: false
+          - name: media
+            label: Image or Video
+            fields:
+              - name: file
+                label: Image or Video
+                widget: file
+                accept: "image/*,video/mp4,video/webm"
+                hint: Compress MP4 video before upload. Images convert to WebP automatically.
+              - {
+                  name: caption,
+                  label: Caption,
+                  widget: string,
+                  required: false,
+                  hint: Grey text under media,
+                }
+              - {
+                  name: alt,
+                  label: Description for accessibility,
+                  widget: string,
+                  required: false,
+                  hint: (Works for images only),
+                }
+              - {
+                  name: loop,
+                  label: "Video: play silently on loop",
+                  widget: boolean,
+                  required: false,
+                  default: true,
+                }
 
-  - name: tags_general
-    label: Tags
-    label_singular: Tag
-    folder: content/data/tags/general
-    reorder: true
-    summary: "{{title}}"
-    fields:
-      - { name: title, label: Name, widget: string }
+          - name: slider
+            label: Slider
+            fields:
+              - name: items
+                label: Slides
+                label_singular: Slide
+                widget: list
+                min: 1
+                collapsed: auto
+                thumbnail: image
+                fields:
+                  - { name: image, label: Image, widget: image }
+                  - {
+                      name: alt,
+                      label: Description for accessibility,
+                      widget: string,
+                      required: false,
+                    }
+              - {
+                  name: caption,
+                  label: Caption,
+                  widget: string,
+                  required: false,
+                  hint: Grey text under the image,
+                }
 
-  - name: tags_tools
-    label: Tools
-    label_singular: Tool
-    folder: content/data/tags/tools
-    reorder: true
-    summary: "{{title}}"
-    icon: build
-    fields:
-      - { name: title, label: Name, widget: string }
+          - name: youtube
+            label: Youtube video
+            fields:
+              - name: url
+                label: Youtube link
+                widget: string
+                type: url
+                pattern:
+                  [
+                    '^https://(www\.|m\.)?(youtube\.com|youtu\.be)/',
+                    "Paste a YouTube link",
+                  ]
+              - {
+                  name: caption,
+                  label: Caption,
+                  widget: string,
+                  required: false,
+                  hint: Grey text under the video,
+                }
 
 singletons:
   - name: selected_works
     label: Selected Works Page
-    file: content/pages/selected_works.md
+    file: content/pages/selected_works.yml
     icon: home
     fields:
       - name: slider_projects
         label: Slider projects
         widget: relation
         collection: projects
-        value_field: "{{slug}}"
-        search_fields: ["title"]
-        display_fields: ["title"]
+        filters: [{ field: hidden, values: [false] }]
         multiple: true
-        required: false
+        dropdown_threshold: 0
+        required: true
         hint: Order here = slider order
 
       - name: featured_projects
         label: Featured projects
         widget: relation
         collection: projects
-        value_field: "{{slug}}"
-        search_fields: ["title"]
-        display_fields: ["title"]
+        filters: [{ field: hidden, values: [false] }]
         multiple: true
+        dropdown_threshold: 0
         hint: Order here = order on the page
 
   - name: about
@@ -200,16 +307,20 @@ singletons:
     file: content/pages/about.md
     icon: person
     fields:
-      - { name: title, label: Title, widget: string, required: false }
-      - { name: subtitle, label: Subtitle, widget: string, required: false }
-      - { name: avatar, label: Avatar, widget: image, required: false }
+      - {
+          name: avatar,
+          label: Avatar,
+          widget: image,
+          required: false,
+          hint: Have it in portrait format,
+        }
       - { name: body, label: Body, widget: richtext }
 
   - divider: true
 
   - name: contacts
     label: Contact & Socials
-    file: content/pages/contacts.yml
+    file: content/site/contacts.yml
     icon: contact_page
     fields:
       - {
@@ -221,13 +332,42 @@ singletons:
         }
       - name: socials
         label: Social Links
+        label_singular: Social Link
         widget: list
         required: false
         fields:
-          - {
-              name: platform,
-              label: Platform,
-              widget: select,
-              options: [ArtStation, LinkedIn, Telegram],
-            }
+          - name: platform
+            label: Platform
+            widget: select
+            options:
+              - { label: ArtStation, value: artstation }
+              - { label: LinkedIn, value: linkedin }
+              - { label: Telegram, value: telegram }
           - { name: url, label: URL, type: url, widget: string }
+
+  - divider: true
+
+  - name: settings
+    label: Settings
+    file: content/site/settings.yml
+    icon: settings
+    fields:
+      - name: sorting
+        label: Sorting
+        widget: object
+        collapsed: true
+        fields:
+          - {
+              name: tools_alphabetical,
+              label: "Tools: Sort alphabetically",
+              widget: boolean,
+              default: false,
+              hint: "Off = use manual order set by dragging in Tools list. On = sort tools alphabetically",
+            }
+          - {
+              name: tags_alphabetical,
+              label: "Tags: Sort alphabetically",
+              widget: boolean,
+              default: false,
+              hint: "Off = use manual order set by dragging in Tags list. On = sort tags alphabetically",
+            }
