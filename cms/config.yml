@@ -1,34 +1,382 @@
 # yaml-language-server: $schema=https://unpkg.com/@sveltia/cms/schema/sveltia-cms.json
+# sveltia cms icons: https://fonts.google.com/icons?icon.set=Material+Symbols&icon.platform=web
 
 backend:
   name: github
   repo: derpedcatto/EnwePortfolio
 
+slug:
+  encoding: ascii
+  clean_accents: true
+
+field_defaults:
+  richtext:
+    modes: [rich_text]
+    editor_components: []
+    buttons:
+      [
+        bold,
+        italic,
+        strikethrough,
+        link,
+        heading-two,
+        heading-three,
+        bulleted-list,
+        numbered-list,
+        quote,
+      ]
+
 media_libraries:
   all:
     slugify_filename: true
+    max_file_size: 52428800 # 50 MB
     transformations:
-      raster_image:
+      png:
         format: webp
-        quality: 85
-        width: 2560
-        height: 2560
+        quality: 100
+        width: 4096
+        height: 4096
       svg:
         optimize: true
-
-  cloudflare_r2:
+  cloudflare_r2: &r2
     account_id: d3d3d37b3ea59f639b515fa8b2c730c5
     bucket: enweportfolio
     access_key_id: de24be5494c9250daa07b729222ee36a
     public_url: https://media.annayaroshevych.com
-    prefix: uploads/
+    prefix: projects/
 
 collections:
-  - name: posts
-    label: Posts
-    label_singular: Post
-    folder: /content/posts
+  - name: categories
+    label: Categories
+    label_singular: Category
+    folder: "content/taxonomies/categories"
+    extension: yml
+    format: yml
+    reorder: true
+    slug: "{{parent}}-{{title}}"
+    summary: "{{parent | ternary('   ↳ ', '')}}{{title}}"
+    icon: category
     fields:
-      - { label: Title, name: title, widget: string }
-      - { label: Date, name: date, widget: datetime, type: date }
-      - { label: Body, name: body, widget: richtext }
+      - { name: title, label: Name, widget: string }
+
+      - name: parent
+        label: Parent category
+        widget: relation
+        collection: categories
+        required: false
+        dropdown_threshold: 0
+        hint: Leave empty if this is a level-0 category with no parents. Don't add existing sub-category as parent.
+        filters:
+          - { field: slug, values: ["{{slug}}"], exclude: true }
+
+  - name: tools
+    label: Tools
+    label_singular: Tool
+    folder: content/taxonomies/tools
+    extension: yml
+    format: yml
+    reorder: true
+    summary: "{{title}}"
+    icon: build
+    fields:
+      - { name: title, label: Name, widget: string }
+
+  - name: tags
+    label: Tags
+    label_singular: Tag
+    folder: content/taxonomies/tags
+    extension: yml
+    format: yml
+    reorder: true
+    summary: "{{title}}"
+    icon: tag
+    fields:
+      - { name: title, label: Name, widget: string }
+
+  - divider: true
+
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: content/projects
+    extension: yml
+    format: yml
+    slug: "{{fields._slug}}"
+    summary: "{{title}} ({{date | date('DD.MM.YYYY')}}) {{hidden | ternary('- HIDDEN', '')}}"
+    icon: view_agenda
+    sortable_fields:
+      {
+        fields: ["date", "title"],
+        default: { field: date, direction: descending },
+      }
+    view_filters:
+      - { label: Hidden, field: hidden, pattern: true }
+      - { label: Public, field: hidden, pattern: false }
+    view_groups:
+      - { label: Year, field: date, pattern: '\d{4}' }
+    fields:
+      - { name: title, label: Title, widget: string }
+
+      - {
+          name: hidden,
+          label: Hidden,
+          widget: boolean,
+          default: false,
+          hint: Hide from public website,
+        }
+
+      - name: date
+        label: Date of creation/upload
+        widget: datetime
+        type: date
+        input_timezone: utc
+        hint: Needed to sort projects by newest/oldest
+
+      - {
+          name: summary,
+          label: Short summary,
+          widget: text,
+          required: false,
+          hint: Brief summary (1-2 sentences) for cards description,
+        }
+
+      - name: category
+        label: Category
+        widget: relation
+        collection: categories
+
+      - name: tools
+        label: Tools
+        widget: relation
+        collection: tools
+        multiple: true
+        required: false
+
+      - name: tags
+        label: Tags
+        widget: relation
+        collection: tags
+        multiple: true
+        required: false
+
+      - name: links
+        label: External Links
+        label_singular: External Link
+        widget: list
+        required: false
+        summary: "{{platform}}: {{label}} {{url}}"
+        fields:
+          - name: platform
+            label: Platform
+            widget: select
+            default: custom
+            hint: Link type (only assigns platform icons near link name, nothing else)
+            options:
+              - { label: ArtStation, value: artstation }
+              - { label: Custom, value: custom }
+          - { name: label, label: Label, widget: string, required: false }
+          - { name: url, label: URL, type: url, widget: string }
+
+      - name: thumbnail
+        label: Thumbnail
+        widget: image
+        hint: "Name the file after the project before upload, e.g. cursed-sword-thumb.png"
+        media_libraries:
+          cloudflare_r2: { <<: *r2, prefix: thumbnails/ }
+
+      - name: thumbnail_hover
+        label: Thumbnail (Hover)
+        widget: file
+        required: false
+        hint: "Shows on card hover. Compress videos beforehand. Best formats - PNG, JPG, WebP, MP4 (videos). Name the file after the project before upload, e.g. cursed-sword-hover.mp4"
+        accept: "image/*,video/mp4"
+        media_libraries:
+          cloudflare_r2: { <<: *r2, prefix: thumbnails/ }
+
+      - name: blocks
+        label: Content blocks
+        label_singular: Content block
+        widget: list
+        required: false
+        collapsed: auto
+        thumbnail: file
+        hint: Content blocks for the page. Drag to reorder
+        types:
+          - name: text
+            label: Text
+            summary: "{{body | truncate(80)}}"
+            fields:
+              - name: body
+                label: Text
+                widget: richtext
+
+          - name: media
+            label: Image or Video
+            fields:
+              - name: file
+                label: Image or Video
+                widget: file
+                accept: "image/*,video/mp4,video/webm"
+                hint: Compress MP4 video before upload. Images convert to WebP automatically.
+              - {
+                  name: caption,
+                  label: Caption,
+                  widget: string,
+                  required: false,
+                  hint: Grey text under media,
+                }
+              - {
+                  name: alt,
+                  label: Description for accessibility,
+                  widget: string,
+                  required: false,
+                  hint: (Works for images only),
+                }
+              - {
+                  name: loop,
+                  label: "Video: play silently on loop",
+                  widget: boolean,
+                  required: false,
+                  default: true,
+                }
+
+          - name: slider
+            label: Slider
+            fields:
+              - name: items
+                label: Slides
+                label_singular: Slide
+                widget: list
+                min: 1
+                collapsed: auto
+                thumbnail: image
+                fields:
+                  - { name: image, label: Image, widget: image }
+                  - {
+                      name: alt,
+                      label: Description for accessibility,
+                      widget: string,
+                      required: false,
+                    }
+              - {
+                  name: caption,
+                  label: Caption,
+                  widget: string,
+                  required: false,
+                  hint: Grey text under the image,
+                }
+
+          - name: youtube
+            label: Youtube video
+            fields:
+              - name: url
+                label: Youtube link
+                widget: string
+                type: url
+                pattern:
+                  [
+                    '^https://(www\.|m\.)?(youtube\.com|youtu\.be)/',
+                    "Paste a YouTube link",
+                  ]
+              - {
+                  name: caption,
+                  label: Caption,
+                  widget: string,
+                  required: false,
+                  hint: Grey text under the video,
+                }
+
+singletons:
+  - name: selected_works
+    label: Selected Works Page
+    file: content/pages/selected-works.yml
+    icon: home
+    fields:
+      - name: slider_projects
+        label: Slider projects
+        widget: relation
+        collection: projects
+        filters: [{ field: hidden, values: [false] }]
+        multiple: true
+        dropdown_threshold: 0
+        required: true
+        hint: Order here = slider order
+
+      - name: featured_projects
+        label: Featured projects
+        widget: relation
+        collection: projects
+        filters: [{ field: hidden, values: [false] }]
+        multiple: true
+        dropdown_threshold: 0
+        hint: Order here = order on the page
+
+  - name: about
+    label: About Page
+    file: content/pages/about.md
+    icon: person
+    fields:
+      - name: avatar
+        label: Avatar
+        widget: image
+        required: false
+        hint: Have it in portrait format
+        media_libraries:
+          cloudflare_r2: { <<: *r2, prefix: site/ }
+      - { name: body, label: Body, widget: richtext }
+
+  - divider: true
+
+  - name: contacts
+    label: Contact & Socials
+    file: content/site/contacts.yml
+    icon: contact_page
+    fields:
+      - {
+          name: email,
+          label: Email,
+          type: email,
+          widget: string,
+          required: false,
+        }
+      - name: socials
+        label: Social Links
+        label_singular: Social Link
+        widget: list
+        required: false
+        fields:
+          - name: platform
+            label: Platform
+            widget: select
+            options:
+              - { label: ArtStation, value: artstation }
+              - { label: LinkedIn, value: linkedin }
+              - { label: Telegram, value: telegram }
+          - { name: url, label: URL, type: url, widget: string }
+
+  - divider: true
+
+  - name: settings
+    label: Settings
+    file: content/site/settings.yml
+    icon: settings
+    fields:
+      - name: sorting
+        label: Sorting
+        widget: object
+        collapsed: true
+        fields:
+          - {
+              name: tools_alphabetical,
+              label: "Tools: Sort alphabetically",
+              widget: boolean,
+              default: false,
+              hint: "Off = use manual order set by dragging in Tools list. On = sort tools alphabetically",
+            }
+          - {
+              name: tags_alphabetical,
+              label: "Tags: Sort alphabetically",
+              widget: boolean,
+              default: false,
+              hint: "Off = use manual order set by dragging in Tags list. On = sort tags alphabetically",
+            }
