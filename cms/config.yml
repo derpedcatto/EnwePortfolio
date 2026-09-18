@@ -43,7 +43,6 @@ media_libraries:
     bucket: enweportfolio
     access_key_id: de24be5494c9250daa07b729222ee36a
     public_url: https://media.annayaroshevych.com
-    prefix: projects/
 
 collections:
   - name: categories
@@ -218,6 +217,8 @@ collections:
                 widget: file
                 accept: "image/*,video/mp4,video/webm"
                 hint: Compress MP4 video before upload. Images convert to WebP automatically.
+                media_libraries:
+                  cloudflare_r2: { <<: *r2, prefix: projects/ }
               - {
                   name: caption,
                   label: Caption,
@@ -251,7 +252,11 @@ collections:
                 collapsed: auto
                 thumbnail: image
                 fields:
-                  - { name: image, label: Image, widget: image }
+                  - name: image
+                    label: Image
+                    widget: image
+                    media_libraries:
+                      cloudflare_r2: { <<: *r2, prefix: projects/ }
                   - {
                       name: alt,
                       label: Description for accessibility,
