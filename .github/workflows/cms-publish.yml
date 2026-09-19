@@ -1,0 +1,9 @@
+name: CMS Publish
+on:
+  repository_dispatch:
+    types: [sveltia-cms-publish]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - run: curl -fsS -X POST "${{ secrets.CF_DEPLOY_HOOK }}"

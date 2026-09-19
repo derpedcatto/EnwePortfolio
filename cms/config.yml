@@ -4,6 +4,7 @@
 backend:
   name: github
   repo: derpedcatto/EnwePortfolio
+  skip_ci: true
 
 slug:
   encoding: ascii
