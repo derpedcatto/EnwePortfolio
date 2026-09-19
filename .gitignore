@@ -28,3 +28,6 @@ vite.config.ts.timestamp-*
 
 # Local CMS files
 /static/cms/
+
+# ! Remove on release ver
+/content
