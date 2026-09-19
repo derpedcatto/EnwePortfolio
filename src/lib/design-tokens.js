@@ -1,3 +1,8 @@
+const colorRef = (color) => `var(--color-${color})`;
+
+const mix = (color, amount, base = "bg") =>
+  `color-mix(in oklab, var(--color-${color}) ${amount}%, var(--color-${base}))`;
+
 export default {
   breakpoint: {
     sm: "40rem" /* 640px */,
@@ -7,7 +12,22 @@ export default {
     "2xl": "96rem" /* 1536px */,
   },
   font: {
-    heading: '"Jura", system-ui, sans-serif',
-    body: '"Montserrat", system-ui, sans-serif',
+    family: {
+      heading: '"Jura", system-ui, sans-serif',
+      body: '"Montserrat", system-ui, sans-serif',
+    },
+  },
+  color: {
+    /* base */
+    bg: ["#fbefef", "#100404"],
+    text: ["#130707", "#f8ecec"],
+    accent: ["#4d0000", "#ffb3b3"],
+
+    /* derived */
+    surface: mix("text", 5),
+    border: mix("text", 15),
+    "text-muted": mix("text", 65),
+    "accent-hover": mix("accent", 80),
+    "on-accent": colorRef("bg"),
   },
 };

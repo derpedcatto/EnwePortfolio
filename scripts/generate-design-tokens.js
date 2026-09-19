@@ -12,7 +12,10 @@ function flattenTokens(obj, prefix = "") {
   for (const [key, value] of Object.entries(obj)) {
     const name = prefix ? `${prefix}-${key}` : key;
 
-    if (value !== null && typeof value === "object") {
+    if (Array.isArray(value)) {
+      const [light, dark] = value;
+      lines.push(`--${name}: light-dark(${light}, ${dark});`);
+    } else if (value !== null && typeof value === "object") {
       lines.push(...flattenTokens(value, name));
     } else {
       lines.push(`--${name}: ${value};`);
