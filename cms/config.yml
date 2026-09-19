@@ -52,7 +52,7 @@ collections:
     extension: yml
     format: yml
     reorder: true
-    slug: "{{parent}}-{{title}}"
+    slug: "{{title}}"
     summary: "{{parent | ternary('   ↳ ', '')}}{{title}}"
     icon: category
     fields:
@@ -114,7 +114,12 @@ collections:
     view_groups:
       - { label: Year, field: date, pattern: '\d{4}' }
     fields:
-      - { name: title, label: Title, widget: string }
+      - {
+          name: title,
+          label: Title,
+          widget: string,
+          hint: "Slug field above Title field sets how URL for this project should look (ex. 'cursed-sword'). Use lowercase words with dashes to name it. You can change it later only from the 3-dot menu -> Slug Editor.",
+        }
 
       - {
           name: hidden,
