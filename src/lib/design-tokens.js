@@ -62,9 +62,9 @@ export default {
       relaxed: 1.6,
     },
     tracking: {
-      tight: "-0.01rem",
-      normal: "0rem",
-      wide: "0.08rem",
+      tight: "-0.01em",
+      normal: "0em",
+      wide: "0.08em",
     },
     weight: {
       normal: 400,
@@ -73,11 +73,13 @@ export default {
     },
   },
   radius: {
+    sm: "0.25rem",
     md: "0.5rem",
     full: "9999px",
   },
-  zIndex: {
+  zindex: {
     base: 0,
+    sticky: 5,
     overlay: 10,
   },
   color: {
@@ -90,6 +92,7 @@ export default {
     surface: mix("text", 5),
     border: mix("text", 15),
     "border-subtle": mix("text", 8),
+    "border-strong": mix("text", 45),
     "text-muted": mix("text", 65),
     "text-on-accent": "var(--color-bg)",
     "accent-hover": mix("accent", 85, "text"),
