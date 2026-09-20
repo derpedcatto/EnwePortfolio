@@ -1,21 +1,25 @@
 import adapter from "@sveltejs/adapter-cloudflare";
 import { mdsvex } from "mdsvex";
-import { readFileSync } from "node:fs";
-import { fileURLToPath } from "node:url";
+import { customMediaCss } from "./scripts/design-tokens-css.js";
 
-const cssMediaPath = fileURLToPath(
-  new URL("./src/styles/media.css", import.meta.url),
-);
+// everything in one line so source maps line numbers are consistent
+const customMedia = customMediaCss().replace(/\r?\n/g, " ") + " ";
+
+const USES_CUSTOM_MEDIA = /@media[^{;]*\(\s*--/;
 
 /** @type {import('svelte/compiler').PreprocessorGroup} */
 const injectCssMedia = {
   name: "inject-css-custom-media",
   style: ({ content, attributes }) => {
-    if (attributes.lang && attributes.lang !== "css") return;
+    if (attributes.lang && attributes.lang !== "css") {
+      return;
+    }
 
-    // everything in one line so source maps line numbers are consistent
-    const media = readFileSync(cssMediaPath, "utf8").replace(/\r?\n/g, " ");
-    return { code: media + content, dependencies: [cssMediaPath] };
+    if (!USES_CUSTOM_MEDIA.test(content)) {
+      return;
+    }
+
+    return { code: customMedia + content };
   },
 };
 
