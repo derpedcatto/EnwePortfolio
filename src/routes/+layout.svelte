@@ -2,6 +2,8 @@
 	import '../styles/main.css';
 	import favicon from '$lib/assets/favicon.svg';
 
+	import { MainLayout } from '$lib';
+
 	let { children } = $props();
 </script>
 
@@ -9,4 +11,6 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-{@render children()}
+<MainLayout>
+	{@render children()}
+</MainLayout>
