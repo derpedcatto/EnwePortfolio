@@ -1,4 +1,4 @@
-import designTokens from "../src/lib/design-tokens.js";
+import designTokens from "../src/lib/styles/design-tokens.js";
 
 export const GENERATED_COMMENT = "/* generated, do not edit */\n\n";
 
