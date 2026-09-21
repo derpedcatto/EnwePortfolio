@@ -25,7 +25,7 @@ const injectCssMedia = {
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  extensions: [".svelte", ".svx"],
+  extensions: [".svelte", ".svx", ".md"],
   compilerOptions: {
     runes: ({ filename }) =>
       filename.split(/[/\\]/).includes("node_modules") ? undefined : true,

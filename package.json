@@ -8,19 +8,29 @@
     "build": "npm run design-tokens && vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
-    "design-tokens": "node scripts/generate-design-tokens.js"
+    "design-tokens": "node scripts/generate-design-tokens.js",
+    "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
+    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@sveltejs/adapter-cloudflare": "^7.2.8",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
     "browserslist": "^4.28.9",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-svelte": "^3.23.0",
+    "globals": "^17.12.0",
+    "js-yaml": "^5.4.2",
     "lightningcss": "^1.33.0",
     "mdsvex": "^0.12.8",
     "prettier": "^3.9.6",
     "svelte": "^5.55.2",
+    "svelte-check": "^4.7.6",
+    "typescript": "^6.0.3",
     "vite": "^8.0.7"
   }
 }
