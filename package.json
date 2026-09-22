@@ -1,7 +1,6 @@
 {
   "name": "enweportfolio",
   "private": true,
-  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "npm run design-tokens && vite dev",
@@ -9,16 +8,19 @@
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
     "design-tokens": "node scripts/generate-design-tokens.js",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./jsconfig.json --watch",
+    "check": "svelte-kit sync && svelte-check",
+    "check:watch": "npm run check -- --watch",
     "lint": "eslint .",
-    "lint:fix": "eslint . --fix"
+    "lint:fix": "eslint . --fix",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@sveltejs/adapter-cloudflare": "^7.2.8",
     "@sveltejs/kit": "^2.70.3",
     "@sveltejs/vite-plugin-svelte": "^7.0.0",
+    "@types/node": "^26.6.2",
     "browserslist": "^4.28.9",
     "eslint": "^10.10.0",
     "eslint-config-prettier": "^10.1.8",
@@ -28,9 +30,12 @@
     "lightningcss": "^1.33.0",
     "mdsvex": "^0.12.8",
     "prettier": "^3.9.6",
+    "prettier-plugin-svelte": "^4.1.1",
     "svelte": "^5.55.2",
     "svelte-check": "^4.7.6",
     "typescript": "^6.0.3",
-    "vite": "^8.0.7"
+    "typescript-eslint": "^8.70.1",
+    "vite": "^8.0.7",
+    "zod": "^4.6.5"
   }
 }

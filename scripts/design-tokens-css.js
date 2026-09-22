@@ -3,7 +3,9 @@ import designTokens from "../src/lib/styles/design-tokens.js";
 export const GENERATED_COMMENT = "/* generated, do not edit */\n\n";
 
 export function rootCss(tokens = designTokens) {
-  const { breakpoint: _breakpoint, ...cssTokens } = tokens;
+  const cssTokens = Object.fromEntries(
+    Object.entries(tokens).filter(([key]) => key !== "breakpoint"),
+  );
 
   return `:root {\n${flattenTokens(cssTokens).join("\n")}\n}\n`;
 }

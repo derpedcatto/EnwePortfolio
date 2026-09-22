@@ -13,9 +13,17 @@ layout - gutter
   "2xl": "2.125rem", // 34
 */
 
+/**
+ * @param {string} color
+ * @param {number} amount
+ */
 const mix = (color, amount, base = "bg") =>
   `color-mix(in oklab, var(--color-${color}) ${amount}%, var(--color-${base}))`;
 
+/**
+ * @param {string} color
+ * @param {number} amount
+ */
 const alpha = (color, amount) =>
   `color-mix(in oklab, var(--color-${color}) ${amount}%, transparent)`;
 

@@ -1,13 +1,15 @@
 import js from "@eslint/js";
+import ts from "typescript-eslint";
 import svelte from "eslint-plugin-svelte";
 import globals from "globals";
 import prettier from "eslint-config-prettier";
 import svelteConfig from "./svelte.config.js";
 
 export default [
-  { ignores: [".svelte-kit/", "build/", ".wrangler/"] },
+  { ignores: [".svelte-kit/", ".wrangler/"] },
 
   js.configs.recommended,
+  ...ts.configs.recommended,
   ...svelte.configs.recommended,
 
   prettier,
@@ -19,9 +21,9 @@ export default [
     },
   },
   {
-    files: ["**/*.svelte", "**/*.svelte.js"],
+    files: ["**/*.svelte", "**/*.svelte.ts", "**/*.svelte.js"],
     languageOptions: {
-      parserOptions: { svelteConfig },
+      parserOptions: { parser: ts.parser, svelteConfig },
     },
   },
 ];
