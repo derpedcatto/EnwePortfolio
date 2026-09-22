@@ -19,7 +19,6 @@ field_defaults:
       [
         bold,
         italic,
-        strikethrough,
         link,
         heading-two,
         heading-three,
@@ -86,7 +85,12 @@ collections:
     summary: "{{title}}"
     icon: build
     fields:
-      - { name: title, label: Name, widget: string }
+      - {
+          name: title,
+          label: Name,
+          widget: string,
+          comment: "Tool name must be unique, no duplicates",
+        }
 
   - name: tags
     label: Tags
@@ -98,7 +102,12 @@ collections:
     summary: "{{title}}"
     icon: tag
     fields:
-      - { name: title, label: Name, widget: string }
+      - {
+          name: title,
+          label: Name,
+          widget: string,
+          comment: "Tag name must be unique, no duplicates",
+        }
 
   - divider: true
 
@@ -122,20 +131,16 @@ collections:
     view_groups:
       - { label: Year, field: date, pattern: '\d{4}' }
     fields:
-      - {
-          name: title,
-          label: Title,
-          widget: string,
-          comment: "URL name (e.g. `cursed-sword`) is set once, in the Slug field when creating. To change it later: Menu icon - Slug Editor. Renaming slugs is a potentially breaking change.",
-        }
+      - name: title
+        label: Title
+        widget: string
+        comment: "Project name must be unique, no duplicates"
 
-      - {
-          name: hidden,
-          label: Hidden,
-          widget: boolean,
-          default: false,
-          hint: Hide from public website,
-        }
+      - name: hidden
+        label: Hidden
+        widget: boolean
+        default: false
+        hint: Hide from public website (will not be deleted),
 
       - name: date
         label: Date of creation/upload
@@ -145,13 +150,17 @@ collections:
         input_timezone: utc
         hint: Needed to sort projects by newest/oldest
 
-      - {
-          name: summary,
-          label: Short summary,
-          widget: text,
-          required: false,
-          hint: Brief summary (1-2 sentences) for cards description,
-        }
+      - name: summary
+        label: Short summary
+        widget: text
+        required: false
+        hint: Brief summary (1-2 sentences) for accessibility,
+
+      - name: featured_project_slider_widget_text
+        label: Featured Project slider widget text
+        comment: Text that will be displayed on 'Featured Projects' slider card
+        widget: string
+        required: false
 
       - name: category
         label: Category
@@ -244,14 +253,14 @@ collections:
                   label: Caption,
                   widget: string,
                   required: false,
-                  hint: Grey text under media,
+                  hint: Grey caption under media,
                 }
               - {
                   name: alt,
-                  label: Description for accessibility,
+                  label: Description (for accessibility),
                   widget: string,
                   required: false,
-                  hint: (Works for images only),
+                  hint: (Do only for images),
                 }
               - {
                   name: loop,
@@ -281,23 +290,25 @@ collections:
                       cloudflare_r2: { <<: *r2, prefix: projects/ }
                   - {
                       name: alt,
-                      label: Description for accessibility,
+                      label: Description (for accessibility),
                       widget: string,
                       required: false,
+                      hint: (Do only for images),
                     }
               - {
                   name: caption,
                   label: Caption,
                   widget: string,
                   required: false,
-                  hint: Grey text under the image,
+                  hint: Grey caption under the image,
                 }
 
           - name: youtube
-            label: Youtube video
+            label: Youtube Link
+            summary: "{{caption}}"
             fields:
               - name: url
-                label: Youtube link
+                label: Video URL
                 widget: string
                 type: url
                 pattern:
@@ -306,11 +317,18 @@ collections:
                     "Paste a YouTube link to one video",
                   ]
               - {
+                  name: loop,
+                  label: "Play silently on loop",
+                  widget: boolean,
+                  default: false,
+                  hint: "Autoplays muted and looped",
+                }
+              - {
                   name: caption,
                   label: Caption,
                   widget: string,
                   required: false,
-                  hint: Grey text under the video,
+                  hint: Grey caption under the video,
                 }
 
 singletons:
@@ -340,7 +358,7 @@ singletons:
 
   - name: about
     label: About Page
-    file: content/pages/about.md
+    file: content/pages/about.yml
     icon: person
     fields:
       - name: avatar
@@ -365,7 +383,7 @@ singletons:
           label: Email,
           type: email,
           widget: string,
-          required: false,
+          required: true,
         }
       - name: socials
         label: Social Links
