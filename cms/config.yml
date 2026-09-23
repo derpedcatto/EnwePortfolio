@@ -364,7 +364,7 @@ singletons:
       - name: avatar
         label: Avatar
         widget: image
-        required: false
+        required: true
         hint: Have it in portrait format
         choose_url: false
         media_libraries:
