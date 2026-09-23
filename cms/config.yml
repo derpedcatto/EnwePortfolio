@@ -296,8 +296,9 @@ collections:
                     label: Image
                     widget: image
                     choose_url: false
+                    accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
                     comment: "Rename file to project name with image role (ex. `cursed-sword-slide-01`)"
-                    hint: "Formats: PNG / JPG / WebP"
+                    hint: "Compress MP4/Webm video before upload. Formats: PNG / JPG / WebP images, MP4 / Webm videos."
                     media_libraries:
                       cloudflare_r2: { <<: *r2, prefix: projects/ }
                   - {
@@ -305,14 +306,13 @@ collections:
                       label: Description (for accessibility),
                       widget: string,
                       required: false,
-                      hint: (Do only for images),
                     }
               - {
                   name: caption,
                   label: Caption,
                   widget: string,
                   required: false,
-                  hint: Grey caption under the image,
+                  hint: Grey caption under the slider,
                 }
 
           - name: youtube
