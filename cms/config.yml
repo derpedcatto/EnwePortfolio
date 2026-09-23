@@ -206,7 +206,7 @@ collections:
         hint: "JPG, PNG or WebP"
         choose_url: false
         media_libraries:
-          cloudflare_r2: { <<: *r2, prefix: thumbnails/ }
+          cloudflare_r2: { <<: *r2, prefix: projects/ }
 
       - name: thumbnail_hover
         label: Thumbnail (Hover)
@@ -217,7 +217,7 @@ collections:
         hint: "Shown when the cursor is over the card. Compress videos before uploading. Best formats - PNG, JPG, WebP (img/video), MP4 (video)."
         choose_url: false
         media_libraries:
-          cloudflare_r2: { <<: *r2, prefix: thumbnails/ }
+          cloudflare_r2: { <<: *r2, prefix: projects/ }
 
       - name: blocks
         label: Content blocks
