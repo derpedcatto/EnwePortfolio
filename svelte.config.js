@@ -1,5 +1,4 @@
 import adapter from "@sveltejs/adapter-cloudflare";
-import { mdsvex } from "mdsvex";
 import { customMediaCss } from "./scripts/design-tokens-css.js";
 
 // everything in one line so source maps line numbers are consistent
@@ -25,12 +24,11 @@ const injectCssMedia = {
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-  extensions: [".svelte", ".svx", ".md"],
   compilerOptions: {
     runes: ({ filename }) =>
       filename.split(/[/\\]/).includes("node_modules") ? undefined : true,
   },
-  preprocess: [mdsvex(), injectCssMedia],
+  preprocess: [injectCssMedia],
   kit: {
     adapter: adapter(),
   },

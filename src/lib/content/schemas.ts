@@ -1,6 +1,13 @@
 import * as z from "zod";
+import { micromark } from "micromark";
 
-export const slug = z.string().regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/);
+export const slug = z.string().regex(/^[a-z0-9_~]+(?:-[a-z0-9_~]+)*$/);
+export const richtext = z.string().transform((markdown) =>
+  micromark(markdown).replace(
+    /<a href="(https?:\/\/[^"]*)"/g, // external link
+    '<a href="$1" target="_blank" rel="noopener noreferrer"',
+  ),
+);
 
 export const categorySchema = z.object({
   slug,
@@ -13,4 +20,10 @@ export const categorySchema = z.object({
     .pipe(slug.nullable()),
 });
 
-export type Category = z.infer<typeof categorySchema>;
+export const aboutSchema = z.object({
+  avatar: z.url().nullish(),
+  body: richtext,
+});
+
+export type CategoryEntry = z.infer<typeof categorySchema>;
+export type About = z.infer<typeof aboutSchema>;

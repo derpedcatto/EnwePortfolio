@@ -9,8 +9,14 @@
 <ul>
   {#each data.categories as category (category.slug)}
     <li>
-      {category.order} — {category.title}
-      {category.parent ? `(parent: ${category.parent})` : ""}
+      {category.title}
+      {#if category.children.length > 0}
+        <ul>
+          {#each category.children as child (child.slug)}
+            <li>{child.title}</li>
+          {/each}
+        </ul>
+      {/if}
     </li>
   {/each}
 </ul>
