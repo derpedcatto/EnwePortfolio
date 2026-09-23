@@ -203,7 +203,7 @@ collections:
         label: Thumbnail
         widget: image
         comment: "Rename file to project name with image role (ex. `cursed-sword-thumb`)"
-        hint: "JPG, PNG or WebP"
+        hint: "Formats: PNG / JPG / WebP"
         choose_url: false
         media_libraries:
           cloudflare_r2: { <<: *r2, prefix: projects/ }
@@ -214,7 +214,17 @@ collections:
         required: false
         accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
         comment: "Rename file to project name with image role (ex. `cursed-sword-hover`)"
-        hint: "Shown when the cursor is over the card. Compress videos before uploading. Best formats - PNG, JPG, WebP (img/video), MP4 (video)."
+        hint: "Shown when the cursor is over the card. Compress videos before uploading. Formats: PNG / JPG / WebP images, MP4 / Webm videos."
+        choose_url: false
+        media_libraries:
+          cloudflare_r2: { <<: *r2, prefix: projects/ }
+
+      - name: thumbnail_featured_projects_slider
+        label: Thumbnail (Featured Projects slider)
+        widget: image
+        required: false
+        comment: "Shown on 'Featured Projects' slider. Rename file to project name with image role (ex. `cursed-sword-thumb-slider`)"
+        hint: "Wider image/video preferred. Compress videos before uploading. Formats: PNG / JPG / WebP images, MP4 / Webm videos."
         choose_url: false
         media_libraries:
           cloudflare_r2: { <<: *r2, prefix: projects/ }
@@ -244,7 +254,7 @@ collections:
                 widget: file
                 accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
                 comment: "Rename file to project name with image role, e.g. `cursed-sword-render-01`."
-                hint: Compress MP4/Webm video before upload.
+                hint: "Compress MP4/Webm video before upload. Formats: PNG / JPG / WebP images, MP4 / Webm videos."
                 choose_url: false
                 media_libraries:
                   cloudflare_r2: { <<: *r2, prefix: projects/ }
@@ -286,6 +296,7 @@ collections:
                     widget: image
                     choose_url: false
                     comment: "Rename file to project name with image role (ex. `cursed-sword-slide-01`)"
+                    hint: "Formats: PNG / JPG / WebP"
                     media_libraries:
                       cloudflare_r2: { <<: *r2, prefix: projects/ }
                   - {
@@ -365,7 +376,8 @@ singletons:
         label: Avatar
         widget: image
         required: true
-        hint: Have it in portrait format
+        comment: Portrait format preferred
+        hint: "Formats: PNG / JPG / WebP"
         choose_url: false
         media_libraries:
           cloudflare_r2: { <<: *r2, prefix: site/ }
