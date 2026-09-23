@@ -221,7 +221,7 @@ collections:
 
       - name: thumbnail_featured_projects_slider
         label: Thumbnail (Featured Projects slider)
-        widget: image
+        widget: file
         required: false
         accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
         comment: "Shown on 'Featured Projects' slider. Rename file to project name with image role (ex. `cursed-sword-thumb-slider`)"
@@ -294,7 +294,7 @@ collections:
                 fields:
                   - name: image
                     label: Image
-                    widget: image
+                    widget: file
                     choose_url: false
                     accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
                     comment: "Rename file to project name with image role (ex. `cursed-sword-slide-01`)"
