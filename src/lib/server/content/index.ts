@@ -1,37 +1,41 @@
-import { categorySchema, type CategoryEntry } from "$lib/content/schemas";
-import type { Category } from "$lib/content/types";
-import { validateCategories } from "$lib/content/validate";
-import { parseCollection } from "./collection";
+import type { AboutPage, Contacts } from "$lib/content/types";
+import {
+  buildCategories,
+  buildTaxonomy,
+  categorySchema,
+  taxonomySchema,
+  validateCategories,
+} from "./collections";
+import { loadCollection, loadSingleton } from "./load";
+import { aboutPageSchema, contactsSchema, settingsSchema } from "./singletons";
 
-/* -------------------------------- Category -------------------------------- */
+const settings = loadSingleton("$content/site/settings.yml", settingsSchema);
 
-const categoryFiles = import.meta.glob<string>(
-  "/content/taxonomies/categories/*.yml",
-  {
-    query: "?raw",
-    import: "default",
-    eager: true,
-  },
+const categoryEntries = loadCollection(
+  "$content/taxonomies/categories",
+  categorySchema,
 );
 
-const categoryEntries = parseCollection(categoryFiles, categorySchema).toSorted(
-  (a, b) => a.order - b.order,
+validateCategories(categoryEntries);
+
+export const categories = buildCategories(categoryEntries);
+
+export const tools = buildTaxonomy(
+  loadCollection("$content/taxonomies/tools", taxonomySchema),
+  settings.sorting.tools_alphabetical,
 );
 
-const categoryProblems = validateCategories(categoryEntries);
+export const tags = buildTaxonomy(
+  loadCollection("$content/taxonomies/tags", taxonomySchema),
+  settings.sorting.tags_alphabetical,
+);
 
-if (categoryProblems.length > 0) {
-  throw new Error(`Invalid content:\n\n${categoryProblems.join("\n")}`);
-}
+export const about: AboutPage = loadSingleton(
+  "$content/pages/about.yml",
+  aboutPageSchema,
+);
 
-const toCategory = (entry: CategoryEntry): Category => ({
-  slug: entry.slug,
-  title: entry.title,
-  children: categoryEntries
-    .filter((child) => child.parent === entry.slug)
-    .map(toCategory),
-});
-
-export const categories: readonly Category[] = categoryEntries
-  .filter((entry) => entry.parent === null)
-  .map(toCategory);
+export const contacts: Contacts = loadSingleton(
+  "$content/site/contacts.yml",
+  contactsSchema,
+);
