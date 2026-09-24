@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "npm run design-tokens && vite dev",
+    "dev": "npm run design-tokens && node scripts/local-cms-config.js && vite dev",
     "build": "npm run design-tokens && vite build",
     "preview": "vite preview",
     "prepare": "svelte-kit sync || echo ''",
