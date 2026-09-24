@@ -1,12 +1,20 @@
 <script>
-	import '../styles/main.css';
-	import favicon from '$lib/assets/favicon.svg';
+  import "../styles/main.css";
+  import favicon from "$lib/assets/favicon.svg";
 
-	let { children } = $props();
+  import Header from "$lib/components/layout/Header.svelte";
+
+  let { children } = $props();
 </script>
 
 <svelte:head>
-	<link rel="icon" href={favicon} />
+  <link rel="icon" href={favicon} />
 </svelte:head>
 
-{@render children()}
+<div class="layout">
+  <Header />
+
+  <main>
+    {@render children()}
+  </main>
+</div>
