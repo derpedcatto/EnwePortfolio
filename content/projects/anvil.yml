@@ -1,0 +1,41 @@
+title: Anvil Prop
+hidden: false
+date: 2026-09-24
+summary: low poly prop сашеньк
+featured_project_slider_widget_text: ''
+category: low-poly
+tools:
+  - 3ds-max
+  - zbrush
+tags:
+  - low-poly
+links: []
+thumbnail: https://media.annayaroshevych.com/projects/anvil-low-poly-01.webp
+thumbnail_hover: https://media.annayaroshevych.com/projects/anvil-low-poly-02.webp
+thumbnail_featured_projects_slider: https://media.annayaroshevych.com/projects/anvil-low-poly-01.webp
+blocks:
+  - type: media
+    file: https://media.annayaroshevych.com/projects/anvil-low-poly-video.mp4
+    caption: video
+    alt: ''
+    loop: true
+  - type: media
+    file: https://media.annayaroshevych.com/projects/anvil-low-poly-zbrush-03.webp
+    caption: ''
+    alt: ''
+    loop: true
+  - type: media
+    file: https://media.annayaroshevych.com/projects/anvil-low-poly-zbrush-01.webp
+    caption: ''
+    alt: ''
+    loop: true
+  - type: media
+    file: https://media.annayaroshevych.com/projects/anvil-low-poly-zbrush-02.webp
+    caption: zbrush sculpt
+    alt: ''
+    loop: true
+  - type: slider
+    caption: ''
+    items:
+      - image: https://media.annayaroshevych.com/projects/anvil-low-poly-zbrush-01.webp
+        alt: ''
