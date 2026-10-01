@@ -15,10 +15,12 @@ export type AboutPage = {
   body: string;
 };
 
+export type SocialPlatformType = "artstation" | "linkedin" | "telegram";
+
 export type Contacts = {
   email: string;
   socials: {
-    platform: "artstation" | "linkedin" | "telegram";
+    platform: SocialPlatformType;
     url: string;
   }[];
 };

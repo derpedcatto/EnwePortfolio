@@ -3,7 +3,11 @@
   import { page } from "$app/state";
   import { resolve } from "$app/paths";
   import { afterNavigate } from "$app/navigation";
-  import type { Contacts, NavItem } from "$lib/content/types";
+  import type {
+    Contacts,
+    NavItem,
+    SocialPlatformType,
+  } from "$lib/content/types";
   import Icon from "../ui/Icon.svelte";
 
   let {
@@ -12,7 +16,7 @@
   }: { navItems: NavItem[]; contactsData: Contacts } = $props();
 
   /* --------------------------------- Socials -------------------------------- */
-  const social = (platform: "artstation" | "linkedin" | "telegram") =>
+  const social = (platform: SocialPlatformType) =>
     contactsData.socials.find((s) => s.platform === platform)?.url ?? "#";
 
   /* ---------------------------------- Href ---------------------------------- */
