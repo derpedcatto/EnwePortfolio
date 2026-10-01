@@ -1,6 +1,8 @@
 // See https://svelte.dev/docs/kit/types#app.d.ts
 // for information about these interfaces
 
+import "@poppanator/sveltekit-svg/dist/svg.d.ts";
+
 /// <reference types="@sveltejs/adapter-cloudflare" />
 declare global {
   namespace App {

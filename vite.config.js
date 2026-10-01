@@ -1,4 +1,5 @@
 import { sveltekit } from "@sveltejs/kit/vite";
+import svg from "@poppanator/sveltekit-svg";
 import browserslist from "browserslist";
 import { browserslistToTargets } from "lightningcss";
 import { fileURLToPath } from "node:url";
@@ -9,7 +10,7 @@ export default defineConfig(({ mode }) => {
   const contentDir = env.CONTENT_DIR || "content";
 
   return {
-    plugins: [sveltekit()],
+    plugins: [sveltekit(), svg()],
     resolve: {
       alias: {
         $content: fileURLToPath(new URL(`./${contentDir}`, import.meta.url)),
