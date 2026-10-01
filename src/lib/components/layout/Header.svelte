@@ -4,7 +4,7 @@
   import { resolve } from "$app/paths";
   import { afterNavigate } from "$app/navigation";
   import type { Contacts, NavItem } from "$lib/content/types";
-  // import Icon from "../ui/Icon.svelte";
+  import Icon from "../ui/Icon.svelte";
 
   let {
     navItems,
@@ -63,6 +63,29 @@
       document.startViewTransition(apply);
     }
   }
+
+  /* -------------------------------- Nav arrow ------------------------------- */
+  let nav = $state<HTMLElement>();
+  let hoveredHref = $state<string>();
+  let arrow = $state<{ x: number; y: number }>();
+  const targetHref = $derived(hoveredHref ?? activeHref);
+
+  function placeArrow() {
+    const a = nav?.querySelector<HTMLElement>("a.target");
+    arrow = a ? { x: a.offsetLeft, y: a.offsetTop } : undefined;
+  }
+
+  $effect(() => {
+    void targetHref; // re-measure when the target changes
+    placeArrow();
+  });
+
+  $effect(() => {
+    if (!nav) return;
+    const observer = new ResizeObserver(placeArrow);
+    observer.observe(nav);
+    return () => observer.disconnect();
+  });
 </script>
 
 <svelte:window onkeydown={(e) => e.key === "Escape" && (open = false)} />
@@ -70,7 +93,7 @@
 <header>
   <div class="bar">
     <div class="brand">
-      <a href="http:" class="brand-name">Anna Yaroshevych</a>
+      <a href={resolve("/about")} class="brand-name">Anna Yaroshevych</a>
 
       <p class="brand-role">3D artist</p>
     </div>
@@ -85,12 +108,20 @@
   </div>
 
   <div id="menu" class="menu" class:open>
-    <nav aria-label="Main">
+    <nav
+      bind:this={nav}
+      onpointerleave={() => (hoveredHref = undefined)}
+      onfocusout={() => (hoveredHref = undefined)}
+      aria-label="Main"
+    >
       {#snippet link(item: NavItem)}
         <a
           href={item.href}
           class:active={item.href === activeHref}
+          class:target={item.href === targetHref}
           aria-current={item.href === activeHref ? "page" : undefined}
+          onpointerenter={() => (hoveredHref = item.href)}
+          onfocus={() => (hoveredHref = item.href)}
         >
           {item.title}
         </a>
@@ -113,6 +144,16 @@
           </li>
         {/each}
       </ul>
+
+      {#if arrow}
+        <span
+          class="nav-arrow"
+          aria-hidden="true"
+          style:translate="{arrow.x}px {arrow.y}px"
+        >
+          <Icon name="navarrow" />
+        </span>
+      {/if}
     </nav>
 
     <div class="menu-footer">
@@ -271,6 +312,48 @@
         }
 
         nav {
+          --nav-shift: calc(var(--font-size-base) + var(--space-2));
+
+          position: relative;
+          padding-inline-end: var(--nav-shift);
+
+          a {
+            position: relative;
+            display: inline-block;
+            transition: translate var(--motion-duration-base)
+              var(--motion-ease-out);
+
+            &.target {
+              translate: var(--nav-shift);
+
+              &::before {
+                content: "";
+                position: absolute;
+                inset-block: 0;
+                right: 100%;
+                width: var(--nav-shift);
+              }
+            }
+          }
+
+          .nav-arrow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            height: 1lh;
+            color: var(--color-accent);
+            pointer-events: none;
+            transition:
+              translate var(--motion-duration-base) var(--motion-ease-out),
+              opacity var(--motion-duration-base);
+
+            @starting-style {
+              opacity: 0;
+            }
+          }
+
           .active {
             color: var(--color-accent);
             font-weight: var(--font-weight-semibold);
