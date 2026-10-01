@@ -1,3 +1,5 @@
+import type { ResolvedPathname } from "$app/types";
+
 /** Tool / Tag / Sub-category */
 export type Taxonomy = {
   slug: string;
@@ -19,4 +21,10 @@ export type Contacts = {
     platform: "artstation" | "linkedin" | "telegram";
     url: string;
   }[];
+};
+
+export type NavItem = {
+  title: string;
+  href: ResolvedPathname;
+  children: readonly NavItem[];
 };
