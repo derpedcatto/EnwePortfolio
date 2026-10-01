@@ -84,6 +84,7 @@ h6 {
 a {
   font-family: var(--font-family-heading);
   color: var(--color-text);
+  transition: color var(--motion-duration-fast);
 }
 
 a:hover {
