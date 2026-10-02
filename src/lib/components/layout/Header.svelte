@@ -265,6 +265,10 @@
           .brand-name {
             font-size: var(--font-size-xl);
             color: var(--color-text);
+
+            &:hover {
+              color: var(--color-accent-hover);
+            }
           }
 
           .brand-role {
