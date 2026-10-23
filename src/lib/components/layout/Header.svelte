@@ -71,12 +71,14 @@
   /* -------------------------------- Nav arrow ------------------------------- */
   let nav = $state<HTMLElement>();
   let hoveredHref = $state<string>();
-  let arrow = $state<{ x: number; y: number }>();
+  let arrow = $state<{ x: number; y: number; h: number }>();
   const targetHref = $derived(hoveredHref ?? activeHref);
 
   function placeArrow() {
     const a = nav?.querySelector<HTMLElement>("a.target");
-    arrow = a ? { x: a.offsetLeft, y: a.offsetTop } : undefined;
+    arrow = a
+      ? { x: a.offsetLeft, y: a.offsetTop, h: a.offsetHeight }
+      : undefined;
   }
 
   $effect(() => {
@@ -154,6 +156,7 @@
           class="nav-arrow"
           aria-hidden="true"
           style:translate="{arrow.x}px {arrow.y}px"
+          style:height="{arrow.h}px"
         >
           <Icon name="navarrow" />
         </span>
@@ -173,13 +176,15 @@
         <a
           rel="external noreferrer noopener"
           target="_blank"
-          href={social("linkedin")}>LinkedIn</a
+          class="address-row2"
+          href={social("artstation")}>ArtStation</a
         >
 
         <a
           rel="external noreferrer noopener"
           target="_blank"
-          href={social("artstation")}>ArtStation</a
+          class="address-row2"
+          href={social("linkedin")}>LinkedIn</a
         >
       </address>
     </div>
@@ -220,22 +225,46 @@
       z-index: var(--zindex-sticky);
       display: flex;
       flex-direction: column;
+      flex-shrink: 0;
       scrollbar-width: thin;
+
       padding-inline: var(--space-4);
       padding-block: var(--space-1);
+
       background-color: var(--color-bg);
       border-bottom: 1px solid var(--color-border-subtle);
-      flex-shrink: 0;
+
+      text-wrap: pretty;
 
       @media (--lg) {
+        max-width: var(--layout-menu);
         height: 100dvh;
         overflow-y: auto;
         overscroll-behavior: contain;
+
         padding-right: 0;
         padding-left: var(--space-4);
         padding-block: var(--space-6);
 
         background-color: var(--color-bg);
+        border-bottom: 0;
+      }
+
+      ul {
+        list-style: none;
+        padding: 0;
+      }
+
+      a {
+        text-decoration: none;
+      }
+
+      a,
+      span {
+        transition:
+          color var(--motion-duration-fast),
+          translate var(--motion-duration-base) var(--motion-ease-out),
+          font-weight var(--motion-duration-fast) var(--motion-ease-out);
       }
 
       .bar {
@@ -259,7 +288,7 @@
           letter-spacing: var(--font-tracking-tight);
 
           @media (--lg) {
-            margin-bottom: var(--space-6);
+            margin-bottom: var(--space-4);
           }
 
           .brand-name {
@@ -328,8 +357,6 @@
           a {
             position: relative;
             display: inline-block;
-            transition: translate var(--motion-duration-base)
-              var(--motion-ease-out);
 
             &.target {
               translate: var(--nav-shift);
@@ -350,11 +377,11 @@
             left: 0;
             display: flex;
             align-items: center;
-            height: 1lh;
             color: var(--color-accent);
             pointer-events: none;
             transition:
               translate var(--motion-duration-base) var(--motion-ease-out),
+              height var(--motion-duration-base) var(--motion-ease-out),
               opacity var(--motion-duration-base);
 
             @starting-style {
@@ -372,7 +399,9 @@
           }
 
           > ul > li:nth-child(2) {
-            margin-bottom: var(--space-6);
+            margin-bottom: var(--space-1);
+            border-bottom: 1px solid var(--color-border);
+            padding-bottom: var(--space-1);
           }
 
           ul li ul {
@@ -399,10 +428,21 @@
 
           address {
             display: grid;
+            grid-template-columns: repeat(1fr);
+            grid-template-rows: repeat(1fr);
             font-style: normal;
 
             a {
               color: var(--color-text-muted);
+
+              &:hover {
+                color: var(--color-accent-hover);
+                font-weight: var(--font-weight-medium);
+              }
+            }
+
+            .address-row2 {
+              grid-row-start: 2;
             }
           }
         }
@@ -429,8 +469,12 @@
             width: 1px;
             height: 1px;
 
+            &:hover + span {
+              color: var(--color-accent-hover);
+            }
+
             &:checked + span {
-              color: var(--color-text);
+              color: var(--color-accent);
             }
 
             &:focus-visible + span {
@@ -439,15 +483,6 @@
             }
           }
         }
-      }
-
-      ul {
-        list-style: none;
-        padding: 0;
-      }
-
-      a {
-        text-decoration: none;
       }
     }
 
