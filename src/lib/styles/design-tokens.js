@@ -102,7 +102,7 @@ export default {
     border: mix("text", 15),
     "border-subtle": mix("text", 8),
     "border-strong": mix("text", 45),
-    "text-muted": mix("text", 65),
+    "text-muted": mix("text", 70),
     "text-on-accent": "var(--color-bg)",
     "accent-hover": mix("accent", 85, "text"),
     "accent-subtle": mix("accent", 10),
