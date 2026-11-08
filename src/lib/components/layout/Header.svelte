@@ -235,6 +235,7 @@
       border-bottom: 1px solid var(--color-border-subtle);
 
       text-wrap: pretty;
+      font-family: var(--font-family-heading);
 
       @media (--lg) {
         max-width: var(--layout-menu);
@@ -260,7 +261,8 @@
       }
 
       a,
-      span {
+      span,
+      button span {
         transition:
           color var(--motion-duration-fast),
           translate var(--motion-duration-base) var(--motion-ease-out),
@@ -271,7 +273,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        height: 3.5rem;
+        height: var(--layout-bar);
         flex-shrink: 0;
 
         @media (--lg) {
@@ -317,6 +319,15 @@
           color: inherit;
           font: inherit;
 
+          &:hover span {
+            color: var(--color-accent-hover);
+          }
+
+          &[aria-expanded="true"] span {
+            color: var(--color-accent);
+            font-weight: var(--font-weight-semibold);
+          }
+
           @media (--lg) {
             display: none;
           }
@@ -326,7 +337,7 @@
       .menu {
         display: none;
         position: fixed;
-        inset: 3.5rem 0 0 0;
+        inset: var(--header-height) 0 0 0;
         overflow-y: auto;
         overscroll-behavior: contain;
         padding: var(--space-4) var(--layout-gutter);

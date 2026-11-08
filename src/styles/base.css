@@ -1,6 +1,8 @@
 /* ------------------------- root & view-transition ------------------------- */
 
 :root {
+  --header-height: calc(var(--layout-bar) + 2 * var(--space-1) + 1px);
+
   color-scheme: light dark;
 
   accent-color: var(--color-accent);
@@ -10,6 +12,12 @@
   scrollbar-gutter: stable;
 
   text-size-adjust: 100%;
+
+  scroll-padding-block-start: calc(var(--header-height) + var(--space-4));
+
+  @media (--lg) {
+    scroll-padding-block-start: var(--space-4);
+  }
 }
 
 :root[data-theme="light"] {
@@ -26,12 +34,31 @@
   }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0ms;
+    --motion-duration-base: 0ms;
+    --motion-duration-slow: 0ms;
+    --motion-duration-reveal: 0ms;
+    --motion-duration-zoom: 0ms;
+    --motion-stagger-step: 0ms;
+    --motion-stagger-card: 0ms;
+  }
+}
+
 ::view-transition-old(root),
 ::view-transition-new(root) {
   animation-duration: var(--motion-duration-base);
+  animation-timing-function: var(--motion-ease-out);
 }
 
 /* ---------------------------------- page ---------------------------------- */
+
+*,
+::before,
+::after {
+  border-color: var(--color-border);
+}
 
 body {
   background-color: var(--color-bg);
@@ -82,7 +109,6 @@ h6 {
 }
 
 a {
-  font-family: var(--font-family-heading);
   color: var(--color-text);
   transition: color var(--motion-duration-fast);
 }
@@ -97,7 +123,29 @@ svg {
   fill: currentColor;
 }
 
-/* ---------------------------------- focus --------------------------------- */
+p,
+li,
+blockquote,
+figcaption {
+  max-inline-size: var(--layout-measure);
+}
+
+p {
+  line-height: var(--font-leading-relaxed);
+}
+
+small,
+figcaption {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-muted);
+}
+
+hr {
+  border: 0;
+  border-block-start: 1px solid var(--color-border);
+}
+
+/* --------------------------------- pseudo --------------------------------- */
 
 :focus-visible {
   outline: 2px solid var(--color-accent);
@@ -111,4 +159,9 @@ svg {
 
 ::target-text {
   background-color: var(--color-accent-subtle);
+}
+
+::placeholder {
+  color: var(--color-text-muted);
+  opacity: 1;
 }

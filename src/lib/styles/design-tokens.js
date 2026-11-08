@@ -47,6 +47,7 @@ export default {
   },
   layout: {
     menu: "14rem", // 224
+    bar: "3.5rem", // 56
     content: "80rem", // 1280
     gutter: "clamp(1rem, 0.5rem + 2.5vw, 2.5rem)", // 16-40
     measure: "min(66ch, 100%)",
