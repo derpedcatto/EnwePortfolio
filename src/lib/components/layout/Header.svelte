@@ -72,7 +72,11 @@
       return;
     }
 
-    nav?.querySelector<HTMLElement>("a")?.focus();
+    const current =
+      nav?.querySelector<HTMLElement>('a[aria-current]="page"]') ??
+      nav?.querySelector<HTMLElement>("a");
+
+    current?.focus();
 
     const otherEl = [...(headerEl.parentElement?.children ?? [])].filter(
       (el): el is HTMLElement => el !== headerEl && el instanceof HTMLElement,
@@ -160,7 +164,7 @@
     </button>
   </div>
 
-  <div class="menu" class:open>
+  <div class="menu" id="menu" class:open>
     <nav
       bind:this={nav}
       onpointerleave={() => (hoveredHref = undefined)}
