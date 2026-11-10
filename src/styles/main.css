@@ -5,3 +5,16 @@
 @import "./tokens.css";
 @import "./reset.css" layer(reset);
 @import "./base.css" layer(base);
+
+@layer utilities {
+  .visually-hidden {
+    border: 0;
+    clip-path: inset(50%);
+    height: 1px;
+    margin: 0;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+}

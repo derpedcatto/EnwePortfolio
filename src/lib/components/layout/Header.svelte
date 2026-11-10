@@ -43,14 +43,44 @@
 
   /* ---------------------------------- Menu ---------------------------------- */
   let open = $state(false);
-  afterNavigate(() => (open = false));
+  let headerEl = $state<HTMLElement>();
+  let toggleEl = $state<HTMLButtonElement>();
+
+  function closeMenu(returnFocus = true) {
+    if (!open) return;
+
+    open = false;
+
+    if (returnFocus) {
+      toggleEl?.focus();
+    }
+  }
+
+  afterNavigate(() => closeMenu(false));
 
   $effect(() => {
     const mq = matchMedia(`(width >= ${designTokens.breakpoint.lg})`);
-    const close = (e: MediaQueryListEvent) => e.matches && (open = false);
+    const close = (e: MediaQueryListEvent) => e.matches && closeMenu(false);
 
     mq.addEventListener("change", close);
     return () => mq.removeEventListener("change", close);
+  });
+
+  // focus first link on open and make everything outside header inert
+  $effect(() => {
+    if (!open || !headerEl) {
+      return;
+    }
+
+    nav?.querySelector<HTMLElement>("a")?.focus();
+
+    const otherEl = [...(headerEl.parentElement?.children ?? [])].filter(
+      (el): el is HTMLElement => el !== headerEl && el instanceof HTMLElement,
+    );
+
+    otherEl.forEach((el) => (el.inert = true));
+
+    return () => otherEl.forEach((el) => (el.inert = false));
   });
 
   /* ---------------------------------- Theme --------------------------------- */
@@ -65,7 +95,12 @@
 
   function setTheme(t: Theme) {
     theme = t;
-    localStorage.setItem("theme", t);
+
+    try {
+      localStorage.setItem("theme", t);
+    } catch (e) {
+      console.log(`localStorage error: ${e}`);
+    }
 
     const apply = () => (document.documentElement.dataset.theme = t);
     const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -103,9 +138,9 @@
   });
 </script>
 
-<svelte:window onkeydown={(e) => e.key === "Escape" && (open = false)} />
+<svelte:window onkeydown={(e) => e.key === "Escape" && closeMenu()} />
 
-<header>
+<header bind:this={headerEl}>
   <div class="bar">
     <div class="brand">
       <a href={resolve("/about")} class="brand-name">Anna Yaroshevych</a>
@@ -114,15 +149,18 @@
     </div>
 
     <button
+      bind:this={toggleEl}
       class="menu-toggle"
       aria-expanded={open}
-      onclick={() => (open = !open)}
+      id="menu"
+      aria-controls="menu"
+      onclick={() => (open ? closeMenu() : (open = true))}
     >
       <span>menu</span>
     </button>
   </div>
 
-  <div id="menu" class="menu" class:open>
+  <div class="menu" class:open>
     <nav
       bind:this={nav}
       onpointerleave={() => (hoveredHref = undefined)}
@@ -167,39 +205,42 @@
           style:translate="{arrow.x}px {arrow.y}px"
           style:height="{arrow.h}px"
         >
-          <Icon name="navarrow" />
+          <Icon name="navarrow" variant="navarrow" />
         </span>
       {/if}
     </nav>
 
     <div class="menu-footer">
       <address>
-        <a href={`mailto:${contactsData.email}`}>Email</a>
-
-        <a
-          rel="external noreferrer noopener"
-          target="_blank"
-          href={social("telegram")}>Telegram</a
+        <a href={`mailto:${contactsData.email}`}
+          ><Icon name="envelope-light" variant="header" /></a
         >
 
         <a
           rel="external noreferrer noopener"
           target="_blank"
-          class="address-row2"
-          href={social("artstation")}>ArtStation</a
+          href={social("telegram")}
+          ><Icon name="telegram-logo-light" variant="header" /></a
         >
 
         <a
           rel="external noreferrer noopener"
           target="_blank"
-          class="address-row2"
-          href={social("linkedin")}>LinkedIn</a
+          href={social("artstation")}
+          ><Icon name="artstation" variant="header" /></a
+        >
+
+        <a
+          rel="external noreferrer noopener"
+          target="_blank"
+          href={social("linkedin")}
+          ><Icon name="linkedin-logo-light" variant="header" /></a
         >
       </address>
     </div>
 
     <fieldset>
-      <legend>Theme</legend>
+      <legend class="visually-hidden">Theme</legend>
 
       <label>
         <input
@@ -350,7 +391,6 @@
         overscroll-behavior: contain;
         padding: var(--space-4) var(--layout-gutter);
         flex-direction: column;
-        gap: 1rem;
         text-transform: lowercase;
         background-color: var(--color-bg);
 
@@ -386,6 +426,7 @@
           --nav-shift: calc(var(--font-size-base) + var(--space-2));
 
           position: relative;
+          margin-bottom: var(--space-4);
 
           @media (--lg) {
             padding-inline-end: var(--nav-shift);
@@ -462,25 +503,18 @@
           margin-top: auto;
           display: flex;
           flex-direction: column;
-          gap: 1rem;
+          gap: var(--space-4);
 
           address {
-            display: grid;
-            grid-template-columns: repeat(1fr);
-            grid-template-rows: repeat(1fr);
-            font-style: normal;
+            display: flex;
+            gap: var(--space-2);
 
             a {
               color: var(--color-text-muted);
 
               &:hover {
                 color: var(--color-accent-hover);
-                font-weight: var(--font-weight-medium);
               }
-            }
-
-            .address-row2 {
-              grid-row-start: 2;
             }
           }
         }
@@ -491,10 +525,6 @@
           border: 0;
           padding: 0;
           margin: 0;
-
-          legend {
-            font-size: 0;
-          }
 
           span {
             color: var(--color-text-muted);
