@@ -1,4 +1,4 @@
-import type { AboutPage, Contacts } from "$lib/content/types";
+import type { AboutPage, Contacts } from "#lib/content/types";
 import {
   buildCategories,
   buildTaxonomy,

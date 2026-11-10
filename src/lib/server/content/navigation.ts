@@ -1,6 +1,6 @@
 import { resolve } from "$app/paths";
-import type { NavItem } from "$lib/content/types";
-import { categories } from "$lib/server/content";
+import type { NavItem } from "#lib/content/types";
+import { categories } from "#lib/server/content";
 
 const items = categories.map(({ slug, title, children }) => ({
   title,

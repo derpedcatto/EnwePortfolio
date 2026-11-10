@@ -1,8 +1,8 @@
 <script>
   import "../styles/main.css";
-  import favicon from "$lib/assets/favicon.svg?url";
+  import favicon from "#lib/assets/favicon.svg?url";
 
-  import Header from "$lib/components/layout/Header.svelte";
+  import Header from "#lib/components/layout/Header.svelte";
 
   let { children, data } = $props();
 </script>

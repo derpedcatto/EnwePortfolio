@@ -7,9 +7,9 @@
     Contacts,
     NavItem,
     SocialPlatformType,
-  } from "$lib/content/types";
+  } from "#lib/content/types";
   import Icon from "../ui/Icon.svelte";
-  import designTokens from "$lib/styles/design-tokens";
+  import designTokens from "#lib/styles/design-tokens";
 
   let {
     navItems,

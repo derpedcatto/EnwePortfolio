@@ -1,7 +1,7 @@
 <script lang="ts" module>
   import type { Component } from "svelte";
 
-  const icons = import.meta.glob<Component>("$lib/assets/icons/*.svg", {
+  const icons = import.meta.glob<Component>("#lib/assets/icons/*.svg", {
     query: "?component",
     import: "default",
     eager: true,

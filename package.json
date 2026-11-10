@@ -2,6 +2,10 @@
   "name": "enweportfolio",
   "private": true,
   "type": "module",
+  "imports": {
+    "#lib": "./src/lib",
+    "#lib/*": "./src/lib/*"
+  },
   "scripts": {
     "dev": "npm run design-tokens && node scripts/local-cms-config.js && vite dev",
     "build": "npm run design-tokens && vite build",
@@ -18,25 +22,25 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@poppanator/sveltekit-svg": "^7.0.1",
-    "@sveltejs/adapter-cloudflare": "^7.2.8",
-    "@sveltejs/kit": "^2.70.3",
-    "@sveltejs/vite-plugin-svelte": "^7.0.0",
-    "@types/node": "^26.6.2",
-    "browserslist": "^4.28.9",
-    "eslint": "^10.10.0",
+    "@sveltejs/adapter-cloudflare": "^8.0.2",
+    "@sveltejs/kit": "^3.2.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
+    "@types/node": "^26.6.6",
+    "browserslist": "^4.29.5",
+    "eslint": "^10.14.0",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-svelte": "^3.23.0",
-    "globals": "^17.12.0",
-    "js-yaml": "^5.4.2",
+    "eslint-plugin-svelte": "^3.24.1",
+    "globals": "^17.14.0",
+    "js-yaml": "^5.5.0",
     "lightningcss": "^1.33.0",
-    "micromark": "^4.0.2",
-    "prettier": "^3.9.6",
+    "micromark": "^4.0.3",
+    "prettier": "^3.9.10",
     "prettier-plugin-svelte": "^4.1.1",
-    "svelte": "^5.55.2",
-    "svelte-check": "^4.7.6",
+    "svelte": "^5.57.3",
+    "svelte-check": "^4.7.8",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.70.1",
-    "vite": "^8.0.7",
-    "zod": "^4.6.5"
+    "typescript-eslint": "^8.72.2",
+    "vite": "^8.3.7",
+    "zod": "^4.6.7"
   }
 }

@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { optional } from "./fields";
 import { ContentError, type Entry } from "./load";
-import type { Category, Taxonomy } from "$lib/content/types";
+import type { Category, Taxonomy } from "#lib/content/types";
 
 /* ------------------------------- Taxonomies ------------------------------- */
 

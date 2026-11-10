@@ -1,4 +1,4 @@
-import { categories } from "$lib/server/content";
+import { categories } from "#lib/server/content";
 import { error } from "@sveltejs/kit";
 import type { EntryGenerator, PageServerLoad } from "./$types";
 
