@@ -9,6 +9,7 @@
     SocialPlatformType,
   } from "$lib/content/types";
   import Icon from "../ui/Icon.svelte";
+  import designTokens from "$lib/styles/design-tokens";
 
   let {
     navItems,
@@ -45,7 +46,7 @@
   afterNavigate(() => (open = false));
 
   $effect(() => {
-    const mq = matchMedia("(width >= 64rem)");
+    const mq = matchMedia(`(width >= ${designTokens.breakpoint.lg})`);
     const close = (e: MediaQueryListEvent) => e.matches && (open = false);
 
     mq.addEventListener("change", close);
