@@ -34,11 +34,9 @@ media_libraries:
     transformations:
       png:
         format: webp
-        quality: 100
+        quality: 92
         width: 4096
         height: 4096
-      svg:
-        optimize: true
   cloudflare_r2: &r2
     account_id: d3d3d37b3ea59f639b515fa8b2c730c5
     bucket: enweportfolio
@@ -54,14 +52,25 @@ collections:
     format: yml
     reorder: true
     slug: "{{title}}"
-    summary: "{{parent | ternary('   ↳ ', '')}}{{title}}"
+    summary: "{{parent | ternary('   ↳ ', '')}}{{title}} {{hidden | ternary('- HIDDEN', '')}}"
     icon: category
     fields:
+      - { name: title, label: Name, widget: string }
+
       - {
-          name: title,
-          label: Name,
-          widget: string,
-          comment: "Category / sub-category name must be unique, no duplicates",
+          name: hidden,
+          label: Hidden,
+          widget: boolean,
+          default: false,
+          hint: "**All projects under this category will become hidden as well.**",
+        }
+
+      - {
+          name: personal,
+          label: Personal,
+          widget: boolean,
+          default: false,
+          hint: "Display category on personal website version only. **All projects under this category will not be displayed on normal website version.**",
         }
 
       - name: parent
@@ -70,7 +79,6 @@ collections:
         collection: categories
         required: false
         dropdown_threshold: 0
-        hint: Don't add sub-category as parent, website supports only nesting depth of 1
         filters:
           - { field: slug, values: ["{{slug}}"], exclude: true }
           - { field: parent, values: [null, ""] }
@@ -89,7 +97,7 @@ collections:
           name: title,
           label: Name,
           widget: string,
-          comment: "Tool name must be unique, no duplicates",
+          hint: "Will not be displayed on website if not used in any project.",
         }
 
   - name: tags
@@ -106,7 +114,7 @@ collections:
           name: title,
           label: Name,
           widget: string,
-          comment: "Tag name must be unique, no duplicates",
+          hint: "Will not be displayed on website if not used in any project.",
         }
 
   - divider: true
@@ -117,7 +125,7 @@ collections:
     folder: content/projects
     extension: yml
     format: yml
-    slug: "{{fields._slug}}"
+    slug: "{{title}}"
     summary: "{{title}} ({{date | date('DD.MM.YYYY')}}) {{hidden | ternary('- HIDDEN', '')}}"
     icon: view_agenda
     sortable_fields:
@@ -134,33 +142,34 @@ collections:
       - name: title
         label: Title
         widget: string
-        comment: "Project name must be unique, no duplicates"
 
       - name: hidden
         label: Hidden
         widget: boolean
         default: false
-        hint: Hide from public website (will not be deleted),
+
+      - name: personal
+        label: Personal
+        widget: boolean
+        default: false
+        hint: "Display project on personal website version only."
 
       - name: date
-        label: Date of creation/upload
+        label: Date
         widget: datetime
         type: date
         default: "{{now}}"
         input_timezone: utc
-        hint: Needed to sort projects by newest/oldest
 
-      - name: summary
-        label: Short summary
+      - name: display_date
+        label: Display date on project page
+        widget: boolean
+        default: true
+
+      - name: description
+        label: Description
         widget: text
-        required: false
-        hint: Brief summary (1-2 sentences) for accessibility,
-
-      - name: featured_project_slider_widget_text
-        label: Featured Project slider widget text
-        comment: Text that will be displayed on 'Featured Projects' slider card
-        widget: string
-        required: false
+        hint: "Used in link previews (Telegram, LinkedIn, ...) and various other places. 1-2 sentences is enough."
 
       - name: category
         label: Category
@@ -182,62 +191,64 @@ collections:
         required: false
 
       - name: links
-        label: External Links
-        label_singular: External Link
+        label: Links
+        label_singular: Link
         widget: list
         required: false
-        summary: "{{platform}}: {{label}} {{url}}"
+        hint: "Will be displayed at top of the page. Order here = order on website."
         fields:
-          - name: platform
-            label: Platform
+          - name: link
+            label: Link
             widget: select
             default: custom
-            hint: Link type (only assigns platform icons near link name, nothing else)
             options:
               - { label: ArtStation, value: artstation }
               - { label: Custom, value: custom }
-          - { name: label, label: Label, widget: string, required: false }
+          - {
+              name: label,
+              label: Label,
+              widget: string,
+              required: false,
+              hint: "Leave empty to use the platform's default name.",
+            }
           - { name: url, label: URL, type: url, widget: string }
 
       - name: thumbnail
         label: Thumbnail
         widget: image
-        comment: "Rename file to project name with image role (ex. `cursed-sword-thumb`)"
-        hint: "Formats: PNG / JPG / WebP"
+        accept: "image/jpeg,image/png,image/webp"
+        hint: "Square (1:1) image preferred."
         choose_url: false
         media_libraries:
-          cloudflare_r2: { <<: *r2, prefix: projects/ }
+          cloudflare_r2: { <<: *r2, prefix: "projects/{{slug}}/" }
 
       - name: thumbnail_hover
         label: Thumbnail (Hover)
         widget: file
         required: false
         accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
-        comment: "Rename file to project name with image role (ex. `cursed-sword-hover`)"
-        hint: "Shown when the cursor is over the card. Compress videos before uploading. Formats: PNG / JPG / WebP images, MP4 / Webm videos."
+        hint: "Square (1:1) image/video preferred. **Compress videos before uploading.**"
         choose_url: false
         media_libraries:
-          cloudflare_r2: { <<: *r2, prefix: projects/ }
+          cloudflare_r2: { <<: *r2, prefix: "projects/{{slug}}/" }
 
-      - name: thumbnail_featured_projects_slider
-        label: Thumbnail (Featured Projects slider)
+      - name: thumbnail_featured_slider
+        label: Thumbnail (Featured Slider)
         widget: file
         required: false
         accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
-        comment: "Shown on 'Featured Projects' slider. Rename file to project name with image role (ex. `cursed-sword-thumb-slider`)"
-        hint: "Wider image/video preferred. Compress videos before uploading. Formats: PNG / JPG / WebP images, MP4 / Webm videos."
+        hint: "Landscape (16:9) image/video preferred. **Compress videos before uploading.**"
         choose_url: false
         media_libraries:
-          cloudflare_r2: { <<: *r2, prefix: projects/ }
+          cloudflare_r2: { <<: *r2, prefix: "projects/{{slug}}/" }
 
       - name: blocks
-        label: Content blocks
-        label_singular: Content block
+        label: Content Blocks
+        label_singular: Content Block
         widget: list
-        required: false
         collapsed: auto
         thumbnail: file
-        hint: Content blocks for the page. Drag to reorder
+        hint: "Order here = Order on page."
         types:
           - name: text
             label: Text
@@ -248,34 +259,32 @@ collections:
                 widget: richtext
 
           - name: media
-            label: Image or Video
+            label: Media
             fields:
               - name: file
-                label: Image or Video
+                label: Image/Video
                 widget: file
                 accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
-                comment: "Rename file to project name with image role, e.g. `cursed-sword-render-01`."
-                hint: "Compress MP4/Webm video before upload. Formats: PNG / JPG / WebP images, MP4 / Webm videos."
+                hint: "**Compress videos before uploading.**"
                 choose_url: false
                 media_libraries:
-                  cloudflare_r2: { <<: *r2, prefix: projects/ }
+                  cloudflare_r2: { <<: *r2, prefix: "projects/{{slug}}/" }
               - {
                   name: caption,
                   label: Caption,
                   widget: string,
                   required: false,
-                  hint: Grey caption under media,
                 }
               - {
                   name: alt,
-                  label: Description (for accessibility),
+                  label: "Alt text",
                   widget: string,
                   required: false,
-                  hint: (Do only for images),
+                  hint: "Fill in for key media only. Describe what's shown (ex. 'Stylized sword, front view, glowing runes')",
                 }
               - {
-                  name: loop,
-                  label: "Video: play silently on loop",
+                  name: video_loop,
+                  label: "[Video] Play silently on loop",
                   widget: boolean,
                   required: false,
                   default: true,
@@ -284,36 +293,41 @@ collections:
           - name: slider
             label: Slider
             fields:
-              - name: items
-                label: Slides
-                label_singular: Slide
-                widget: list
-                min: 1
-                collapsed: auto
-                thumbnail: image
-                fields:
-                  - name: image
-                    label: Image
-                    widget: file
-                    choose_url: false
-                    accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
-                    comment: "Rename file to project name with image role (ex. `cursed-sword-slide-01`)"
-                    hint: "Compress MP4/Webm video before upload. Formats: PNG / JPG / WebP images, MP4 / Webm videos."
-                    media_libraries:
-                      cloudflare_r2: { <<: *r2, prefix: projects/ }
-                  - {
-                      name: alt,
-                      label: Description (for accessibility),
-                      widget: string,
-                      required: false,
-                    }
               - {
                   name: caption,
                   label: Caption,
                   widget: string,
                   required: false,
-                  hint: Grey caption under the slider,
                 }
+              - name: slides
+                label: Slides
+                label_singular: Slide
+                widget: list
+                min: 1
+                collapsed: auto
+                thumbnail: file
+                fields:
+                  - name: file
+                    label: Image/Video
+                    widget: file
+                    choose_url: false
+                    accept: "image/jpeg,image/png,image/webp,video/mp4,video/webm"
+                    hint: "**Compress videos before uploading.**"
+                    media_libraries:
+                      cloudflare_r2: { <<: *r2, prefix: "projects/{{slug}}/" }
+                  - {
+                      name: caption,
+                      label: Caption,
+                      widget: string,
+                      required: false,
+                    }
+                  - {
+                      name: alt,
+                      label: "Alt text",
+                      widget: string,
+                      required: false,
+                      hint: "Fill in for key media only. Describe what's shown (ex. 'Stylized sword, front view, glowing runes')",
+                    }
 
           - name: youtube
             label: Youtube Link
@@ -340,7 +354,6 @@ collections:
                   label: Caption,
                   widget: string,
                   required: false,
-                  hint: Grey caption under the video,
                 }
 
 singletons:
@@ -349,24 +362,28 @@ singletons:
     file: content/pages/selected-works.yml
     icon: home
     fields:
-      - name: slider_projects
-        label: Slider projects
+      - name: featured_slider
+        label: Featured Slider
         widget: relation
         collection: projects
-        filters: [{ field: hidden, values: [false] }]
+        filters:
+          - { field: hidden, values: [false] }
+          - { field: personal, values: [false] }
         multiple: true
         dropdown_threshold: 0
         required: true
-        hint: Order here = slider order
+        hint: "Order here = Slider order. Make sure that selected projects have `Thumbnail (Featured Slider)` media uploaded."
 
-      - name: featured_projects
-        label: Featured projects
+      - name: featured
+        label: Featured
         widget: relation
         collection: projects
-        filters: [{ field: hidden, values: [false] }]
+        filters:
+          - { field: hidden, values: [false] }
+          - { field: personal, values: [false] }
         multiple: true
         dropdown_threshold: 0
-        hint: Order here = order on the page
+        hint: "Order here = Order on the page."
 
   - name: about
     label: About Page
@@ -377,8 +394,7 @@ singletons:
         label: Avatar
         widget: image
         required: true
-        comment: Portrait format preferred
-        hint: "Formats: PNG / JPG / WebP"
+        hint: "Portrait (4:3) image preferred."
         choose_url: false
         media_libraries:
           cloudflare_r2: { <<: *r2, prefix: site/ }
@@ -386,32 +402,15 @@ singletons:
 
   - divider: true
 
-  - name: contacts
-    label: Contact & Socials
-    file: content/site/contacts.yml
+  - name: links
+    label: Links
+    file: content/site/links.yml
     icon: contact_page
     fields:
-      - {
-          name: email,
-          label: Email,
-          type: email,
-          widget: string,
-          required: true,
-        }
-      - name: socials
-        label: Social Links
-        label_singular: Social Link
-        widget: list
-        required: false
-        fields:
-          - name: platform
-            label: Platform
-            widget: select
-            options:
-              - { label: ArtStation, value: artstation }
-              - { label: LinkedIn, value: linkedin }
-              - { label: Telegram, value: telegram }
-          - { name: url, label: URL, type: url, widget: string }
+      - { name: email, label: Email, type: email, widget: string }
+      - { name: telegram, label: Telegram, type: url, widget: string }
+      - { name: linkedin, label: LinkedIn, type: url, widget: string }
+      - { name: artstation, label: ArtStation, type: url, widget: string }
 
   - divider: true
 
@@ -430,12 +429,12 @@ singletons:
               label: "Tools: Sort alphabetically",
               widget: boolean,
               default: false,
-              hint: "Off = use manual order set by dragging in Tools list. On = sort tools alphabetically",
+              hint: "On = sort tools alphabetically. Off = use manual order set by dragging in Tools list.",
             }
           - {
               name: tags_alphabetical,
               label: "Tags: Sort alphabetically",
               widget: boolean,
               default: false,
-              hint: "Off = use manual order set by dragging in Tags list. On = sort tags alphabetically",
+              hint: "On = sort tags alphabetically. Off = use manual order set by dragging in Tags list.",
             }
