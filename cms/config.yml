@@ -30,7 +30,7 @@ field_defaults:
 media_libraries:
   all:
     slugify_filename: true
-    max_file_size: 52428800 # 50 MB
+    max_file_size: 104857600 # 100 MB
     transformations:
       png:
         format: webp
